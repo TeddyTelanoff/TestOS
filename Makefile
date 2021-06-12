@@ -29,9 +29,9 @@ KERNEL_OBJS=$(KERNEL_C_SRCS:.c=.o) $(KERNEL_S_SRCS:.S=.o)
 
 BOOTSECT=Boot.bin
 KERNEL=Kernel.bin
-IMG=Boot.img
+IMG=./bin/Boot.img
 
-all: dirs bootsect kernel
+all: img
 
 clean:
 	rm -f ./**/*.o
@@ -49,7 +49,7 @@ dirs:
 	mkdir -p bin
 
 bootsect: $(BOOTSECT_OBJS)
-	$(LD) -o ./bin/$(BOOTSECT) $^ -Ttext 0x7C00 --oformat=binary
+	$(LD) -o ./bin/$(BOOTSECT) $^ -Ttext 0x7C00 --oformat=binary -e Boot
 
 kernel: $(KERNEL_OBJS)
 	$(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/Link.ld
