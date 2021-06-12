@@ -1,11 +1,15 @@
 .code32
-
-.section .multiboot
+.section .text.prologue
 
 .global KernelMain
 KernelMain:
-	mov $0x69, %eax
-	ret
+	mov $stack, %esp
+	and $-16, %esp
+	mov $0xDEADBEEF, %eax
+	push %esp
+	push %eax
+	cli
+	call Main
 
 .section .data
 .align 32

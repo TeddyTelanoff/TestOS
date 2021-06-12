@@ -1,6 +1,6 @@
 .code16
 .org 0
-.text
+.section .text
 
 .global Boot
 Boot:
