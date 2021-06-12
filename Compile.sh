@@ -1,2 +1,3 @@
 as src/Boot.S -o bin/Boot.o
-ld bin/Boot.o -e Boot --oformat binary -o bin/Boot.bin -Ttext 0x7C00
+as src/Kernel.S -o bin/Kernel.o
+ld -T src/Link.ld -o bin/TestOS.bin bin/Boot.o bin/Kernel.o -Ttext 0x7C00

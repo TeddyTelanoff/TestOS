@@ -1,1 +1,1 @@
-qemu-system-x86_64 bin/Boot.bin
+qemu-system-x86_64 bin/TestOS.bin

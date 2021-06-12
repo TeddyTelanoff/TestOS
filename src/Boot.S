@@ -4,13 +4,18 @@
 Boot:
 	mov $0x0e, %ah
 
-	mov $msg1, %si
-	call Print
-	
-	mov $msg2, %si
-	call Print
+	call Main
 	hlt
 
+.global Test
+Test:
+	mov $msg1, %si
+	call Print
+	mov $msg2, %si
+	call Print
+	ret
+
+.global Print
 Print:
 	lodsb
 	
@@ -23,6 +28,8 @@ Print:
 Stop:
 	ret
 
+.global msg1
+.global msg2
 msg1:
 	.string "Welcome to the world!\r\n"
 msg2:
