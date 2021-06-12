@@ -1,9 +1,10 @@
 OUTPUT_FORMAT("binary")
-ENTRY(Boot)
+ENTRY(KernelMain)
 SECTIONS
 {
-    .text ALIGN(4K) : AT(0x7C00)
+    .text BLOCK(4K) : ALIGN(4K)
     {
+        *(.multiboot)
         *(.text)
     }
 

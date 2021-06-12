@@ -1,1 +1,1 @@
-qemu-system-x86_64 bin/TestOS.bin
+qemu-system-x86_64 bin/Boot.img

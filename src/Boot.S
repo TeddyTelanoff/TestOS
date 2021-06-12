@@ -1,13 +1,14 @@
 .code16
 
+.section .text
+
 .global Boot
 Boot:
 	mov $0x0e, %ah
+	call Test
 
-	call Main
-	hlt
+	jmpl $0x8, $entry32
 
-.global Test
 Test:
 	mov $msg1, %si
 	call Print
@@ -15,7 +16,6 @@ Test:
 	call Print
 	ret
 
-.global Print
 Print:
 	lodsb
 	
@@ -28,12 +28,15 @@ Print:
 Stop:
 	ret
 
-.global msg1
-.global msg2
 msg1:
 	.string "Welcome to the world!\r\n"
 msg2:
 	.string "Young padowan!\r\n"
+
+.code32
+entry32:
+	mov $0x10000, %eax
+	jmp *%eax
 
 .fill 510-(.-Boot), 1, 0
 .word 0xAA55
