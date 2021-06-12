@@ -1,1 +1,1 @@
-qemu-system-x86_64 bin/Boot.img
+qemu-system-i386 -drive format=raw,file=bin/Boot.img -d cpu_reset

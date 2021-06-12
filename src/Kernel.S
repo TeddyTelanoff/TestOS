@@ -4,13 +4,7 @@
 
 .global KernelMain
 KernelMain:
-    mov $stack, %esp
-    and $-16, %esp
-    mov $0xDEADBEEF, %eax
-    push %esp
-    push %eax
-    
-    call Main
+	mov $0x69, %eax
 	ret
 
 .section .data

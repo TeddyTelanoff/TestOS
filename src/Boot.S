@@ -5,6 +5,7 @@
 .global Boot
 Boot:
 	mov $0x0e, %ah
+	mov $0x69, %eax
 	call Test
 
 	jmpl $0x8, $entry32
