@@ -18,8 +18,7 @@ CCFLAGS+=-fno-builtin-function -fno-builtin
 ASFLAGS=
 LDFLAGS=
 
-BOOTSECT_SRCS=\
-	src/Boot.S
+BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
