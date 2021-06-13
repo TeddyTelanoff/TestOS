@@ -148,6 +148,9 @@ Entry32:
 	mov $0x1000, %eax
 	jmp *%eax
 
+Loop:
+	jmp Loop
+
 .code16
 EnableA20Wait0:
 	xor %ax, %ax
