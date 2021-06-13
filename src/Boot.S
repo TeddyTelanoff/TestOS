@@ -155,14 +155,14 @@ Loop:
 EnableA20Wait0:
 	xor %ax, %ax
 	inb $0x64
-	bt $1, %ax
+	btw $1, %ax
 	jc EnableA20Wait0
 	ret
 
 EnableA20Wait1:
 	xor %ax, %ax
 	int $0x64
-	bt $0, %ax
+	btw $0, %ax
 	jnc EnableA20Wait1
 	ret
 
