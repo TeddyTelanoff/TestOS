@@ -1,17 +1,17 @@
 UNAME := $(shell uname)
 
 ifeq ($(UNAME),Linux)
-	CC=gcc -elf_i386
+	CC=g++ -elf_i386
 	AS=as --32
 	LD=ld -m elf_i386
 else
-	CC=i386-elf-gcc
+	CC=i386-elf-g++
 	AS=i386-elf-as
 	LD=i386-elf-ld
 endif
 
 GFLAGS=
-CCFLAGS=-m32 -std=c11 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
+CCFLAGS=-m32 -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
 CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter
 CCFLAGS+=-nostdlib -nostdinc -ffreestanding -fno-pie -fno-stack-protector
 CCFLAGS+=-fno-builtin-function -fno-builtin
@@ -22,15 +22,15 @@ BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
-KERNEL_C_SRCS=$(wildcard src/*.c)
+KERNEL_CPP_SRCS=$(wildcard src/*.cpp)
 KERNEL_S_SRCS=$(filter-out $(BOOTSECT_SRCS), $(wildcard src/*.S))
-KERNEL_OBJS=$(KERNEL_C_SRCS:.c=.o) $(KERNEL_S_SRCS:.S=.o)
+KERNEL_OBJS=$(KERNEL_CPP_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o)
 
 BOOTSECT=Boot.bin
 KERNEL=Kernel.bin
 IMG=./bin/Boot.img
 
-all: img
+all: clean img
 
 clean:
 	rm -f ./**/*.o
@@ -38,7 +38,7 @@ clean:
 	rm -f ./**/*.elf
 	rm -f ./**/*.bin
 
-%.o: %.c
+%.o: %.cpp
 	$(CC) -o $@ -c $< $(GFLAGS) $(CCFLAGS)
 
 %.o: %.S

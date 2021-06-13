@@ -21,6 +21,7 @@ Boot:
 	mov %dl, driveNum
 	sti
 
+	// Print welcome msg
 	mov $welcomeMsg, %si
 	call Print
 	
@@ -30,10 +31,10 @@ Boot:
 	int $0x13
 
 	mov %dh, numHeads
-	and $0x4F, %cl
+	and $0x3F, %cl
 	mov %cl, sectorsPerTrack
 
-	// Load kernel into mermory at 0x1000 (seg,emt 0x1000)
+	// Load kernel into mermory at 0x10000 (segmemt 0x1000)
 	// Kernel bin is right after first sector
 	// Num sectors to read in %cx
 
@@ -135,7 +136,6 @@ Flush:
 	mov $(gdtDataSegment - gdtStart), %ax
 	mov %ax, %ds
 	mov %ax, %es
-	mov %ax, %es
 	mov %ax, %fs
 	mov %ax, %gs
 	mov %ax, %ss
@@ -144,8 +144,8 @@ Flush:
 
 .code32
 Entry32:
-	// Jump to kernel loaded at 0x1000
-	mov $0x1000, %eax
+	// Jump to kernel loaded at 0x10000
+	mov $0x10000, %eax
 	jmp *%eax
 
 Loop:
@@ -191,7 +191,7 @@ diskErrorMsg:
 
 
 chsSector:
-	.byte 0
+	.byte 1
 chsCylinder:
 	.byte 0
 chsHead:
@@ -224,6 +224,13 @@ gdtp:
 gdtStart:
 gtdNull:
 	.quad 0
+gdtCodeSegment:
+    .word 0xFFFF
+    .word 0
+    .byte 0
+    .byte 0b10011010
+    .byte 0b11001111
+    .byte 0x00
 gdtDataSegment:
 	.word 0xFFFF
 	.word 0
