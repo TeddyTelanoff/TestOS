@@ -18,10 +18,15 @@ typedef enum
 	VGA_White = 15,
 } VgaColor;
 
+typedef enum
+{
+	false,
+	true,
+} bool;
+
 void Main(int magic)
 {
-	unsigned short *vgaBuff = (unsigned short *)0xB8000;
-	vgaBuff[0] = (unsigned short)'T' | (unsigned short)(VGA_Green << 8);
-
-	while(1);
+	unsigned char *vgaBuff = (unsigned char *)0xA0000;
+	vgaBuff[0] = VGA_Green;
+	vgaBuff[1] = VGA_Green;
 }
