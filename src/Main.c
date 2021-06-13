@@ -1,22 +1,10 @@
 typedef enum
 {
-	VGA_Black = 0,
-	VGA_Blue = 1,
-	VGA_Green = 2,
-	VGA_Cyan = 3,
-	VGA_Red = 4,
-	VGA_Magenta = 5,
-	VGA_Brown = 6,
-	VGA_LightGrey = 7,
-	VGA_DarkGrey = 8,
-	VGA_LightBlue = 9,
-	VGA_LightGreen = 10,
-	VGA_LightCyan = 11,
-	VGA_LightRed = 12,
-	VGA_LightMagenta = 13,
-	VGA_LightBrown = 14,
-	VGA_White = 15,
-} VgaColor;
+	PALETTE_Mask = 0x3C6,
+	PALETTE_Read,
+	PALETTE_Write,
+	PALETTE_Data,
+} Palette;
 
 typedef enum
 {
@@ -24,9 +12,38 @@ typedef enum
 	true,
 } bool;
 
+#ifndef asm
+#define asm __asm__ volatile
+#endif
+
+static inline void OutPortB(unsigned short port, unsigned char data) {
+    asm("outb %1, %0" : : "dN" (port), "a" (data));
+}
+
+void ScreenInit()
+{
+	OutPortB(PALETTE_Mask, 0xFF);
+	OutPortB(PALETTE_Write, 0);
+	for (int i = 0; i < 255; i++)
+	{
+        OutPortB(PALETTE_Data, (((i >> 5) & 0x7) * (256 / 8)) / 4);
+        OutPortB(PALETTE_Data, (((i >> 2) & 0x7) * (256 / 8)) / 4);
+        OutPortB(PALETTE_Data, (((i >> 0) & 0x3) * (256 / 4)) / 4);
+    }
+
+    // Set color 255 to white
+    OutPortB(PALETTE_Data, 0x3F);
+    OutPortB(PALETTE_Data, 0x3F);
+    OutPortB(PALETTE_Data, 0x3F);
+}
+
 void Main(int magic)
 {
+	ScreenInit();
+
 	unsigned char *vgaBuff = (unsigned char *)0xA0000;
-	vgaBuff[0] = VGA_Green;
-	vgaBuff[1] = VGA_Green;
+	for (int i = 0; i < 320*200; i++)
+		vgaBuff[i] = i % 256;
+
+	while (true);
 }

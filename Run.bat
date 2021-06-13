@@ -1,1 +1,1 @@
-qemu-system-i386 -drive format=raw,file=bin/Boot.img -d cpu_reset
+qemu-system-i386 -display sdl -drive format=raw,file=bin/Boot.img -audiodev id=dsound,driver=dsound,out.fixed-settings=on,out.frequency=22050,out.buffer-length=80000,timer-period=100 -device sb16,audiodev=dsound
