@@ -155,14 +155,14 @@ Loop:
 EnableA20Wait0:
 	xor %ax, %ax
 	inb $0x64
-	btw $1, %ax
+	bt $1, %ax
 	jc EnableA20Wait0
 	ret
 
 EnableA20Wait1:
 	xor %ax, %ax
 	int $0x64
-	btw $0, %ax
+	bt $0, %ax
 	jnc EnableA20Wait1
 	ret
 
@@ -191,7 +191,7 @@ diskErrorMsg:
 
 
 chsSector:
-	.byte 0
+	.byte 1
 chsCylinder:
 	.byte 0
 chsHead:
