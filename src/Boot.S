@@ -191,28 +191,33 @@ diskErrorMsg:
 
 
 chsSector:
-	.byte 1
+	.byte 0
 chsCylinder:
 	.byte 0
 chsHead:
 	.byte 0
 
-
 driveNum:
 	.byte 0
+marker:
+	.byte 0xDE, 0xAD, 0xBE, 0xEF
 numHeads:
 	.byte 0
 sectorsPerTrack:
 	.byte 0
-segment:
-	.word 0
-sector:
-	.word 0
-offset:
-	.word 0
+
+// INT 0x13 packet
 diskPacket:
 	.byte 0x10
 	.byte 0
+numSectors:
+	.word 1
+offset:
+	.word 0
+segment:
+	.word 0
+sector:
+	.quad 0
 
 // GDT
 .align 16

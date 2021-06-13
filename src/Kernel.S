@@ -8,8 +8,12 @@ KernelMain:
 	mov $0xDEADBEEF, %eax
 	push %esp
 	push %eax
-	cli
 	call Main
+	cli
+	hlt
+	jmp KernelMain
+
+.size KernelMain, . - KernelMain
 
 .section .data
 .align 32

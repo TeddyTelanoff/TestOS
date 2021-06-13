@@ -18,7 +18,7 @@ static inline void OutPortB(unsigned short port, unsigned char data) {
     asm("outb %1, %0" : : "dN" (port), "a" (data));
 }
 
-void ScreenInit()
+static inline void ScreenInit()
 {
 	OutPortB(Palette::Mask, 0xFF);
 	OutPortB(Palette::Write, 0);
