@@ -30,13 +30,18 @@ BOOTSECT=Boot.bin
 KERNEL=Kernel.bin
 IMG=Boot.img
 
-all: clean img
+all: clean img finish
 
 clean:
 	rm -f ./**/*.o
 	rm -f ./**/**/*.o
 	rm -f ./*.img
 	rm -f ./**/*.elf
+	rm -f ./**/*.bin
+
+finish:
+	rm -f ./**/*.o
+	rm -f ./**/**/*.o
 	rm -f ./**/*.bin
 
 %.o: %.cpp

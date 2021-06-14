@@ -98,10 +98,8 @@ namespace
 
 	Stub handlers[Count] = {};
 
-	void ExceptionHandler(Registers &reg)
-	{
-		System::Panic();
-	}
+	void ExceptionHandler(Registers &regs)
+	{ System::Panic(exceptions[regs.intNum]); }
 }
 
 void Isr::Init()
