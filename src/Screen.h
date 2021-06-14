@@ -1,23 +1,17 @@
 #include "Util.h"
 
-enum ScreenData
-{
-	WIDTH = 320,
-	HEIGHT = 200,
-	SCREEN_SIZE = WIDTH * HEIGHT,
-};
-
-enum class ScreenMode
-{
-	Text = 0x00,
-	Color = 0x13,
-};
-
-#define DrawPixel(x, y, col) pixels[(uint)((x) + (y) * WIDTH)] = (col)
+#define PixelAt(i, c) pixels[i / WIDTH][i % WIDTH] = (c)
 
 namespace Screen
 {
-	extern byte pixels[SCREEN_SIZE];
+	enum ScreenData
+	{
+		WIDTH = 320,
+		HEIGHT = 200,
+		SCREEN_SIZE = WIDTH * HEIGHT,
+	};
+	
+	extern void SetPixel(int x, int y, byte col);
 	extern void SwapBuffers();
 }
 
