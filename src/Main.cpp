@@ -41,7 +41,7 @@ extern "C" void Main(int magic)
 
 	unsigned char *vgaBuff = (unsigned char *)0xA0000;
 	for (int i = 0; i < 320*200; i++)
-		vgaBuff[i] = 255;
+		vgaBuff[i] = i % 256;
 
 	while (true);
 }

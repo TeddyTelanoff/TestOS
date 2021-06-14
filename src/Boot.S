@@ -161,7 +161,7 @@ EnableA20Wait0:
 
 EnableA20Wait1:
 	xor %ax, %ax
-	int $0x64
+	inb $0x64
 	bt $0, %ax
 	jnc EnableA20Wait1
 	ret
