@@ -2,7 +2,7 @@
 
 struct Box
 {
-	enum
+	enum Data
 	{
 		Width = 9,
 		Height = 9,
@@ -27,7 +27,7 @@ struct Box
 	{
 		for (int py = 0; py < Height * Scale; py++)
 				for (int px = 0; px < Width * Scale; px++)
-					SetPixel(x * Scale + px, y * Scale + py, Box::Texture[px / Scale][py / Scale]);
+					Screen::SetPixel(x * Scale + px, y * Scale + py, Box::Texture[px / Scale][py / Scale]);
 	}
 
 	void Update()
@@ -40,7 +40,7 @@ extern "C" void Main()
 {
 	Box b = { 1, 1, };
 	b.Draw();
-	SwapBuffers();
+	Screen::SwapBuffers();
 
 	while (true);
 }

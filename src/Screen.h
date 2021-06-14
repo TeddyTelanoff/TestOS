@@ -4,15 +4,13 @@
 
 namespace Screen
 {
-	enum ScreenData
+	enum Data
 	{
-		WIDTH = 320,
-		HEIGHT = 200,
-		SCREEN_SIZE = WIDTH * HEIGHT,
+		Width = 320,
+		Height = 200,
+		ScreenSize = Width * Height,
 	};
 	
 	extern void SetPixel(int x, int y, byte col);
 	extern void SwapBuffers();
 }
-
-using namespace Screen;

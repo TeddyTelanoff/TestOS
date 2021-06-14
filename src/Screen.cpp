@@ -1,12 +1,15 @@
 #include "Screen.h"
 
-static byte *buffer = (byte *)0xA0000;
-static byte pixels[HEIGHT][WIDTH] = {};
+namespace
+{
+	byte *buffer = (byte *)0xA0000;
+	byte pixels[Screen::Height][Screen::Width] = {};
+}
 
 void Screen::SetPixel(int x, int y, byte col)
 {
-	if (x < 0 || x >= WIDTH ||
-		y < 0 || y >= HEIGHT)
+	if (x < 0 || x >= Width ||
+		y < 0 || y >= Height)
 			return;
 	
 	pixels[y][x] = col;
@@ -14,5 +17,5 @@ void Screen::SetPixel(int x, int y, byte col)
 
 void Screen::SwapBuffers()
 {
-	Copy((byte *)pixels, buffer, SCREEN_SIZE);
+	Copy((byte *)pixels, buffer, ScreenSize);
 }
