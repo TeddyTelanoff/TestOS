@@ -46,6 +46,7 @@ extern "C" void Main()
 	Idt::Init();
 	Isr::Init();
 	Irq::Init();
+	Time::Init();
 
 	Box b = { 1, 1, };
 	
@@ -57,7 +58,7 @@ extern "C" void Main()
 	while (true)
 	{
 		ulong now = Time::GetTime();
-		if (now - pFrame < 1)
+		if (now - pFrame < Time::Tps)
 			continue;
 		pFrame = now;
 

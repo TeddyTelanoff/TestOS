@@ -34,8 +34,8 @@ namespace
 	{
 		enum
 		{
-			ICW4,
-			Init,
+			ICW4 = 0x01,
+			Init = 0x10,
 		};
 	}
 
@@ -68,7 +68,7 @@ namespace
 		OutPortB(PIC::BData, 2); // Cascade identitiy
 
 		OutPortB(PIC::AData, PIC::Mode8086);
-		OutPortB(PIC::BData, PIC::Mode8086);
+		OutPortB(PIC::AData, PIC::Mode8086);
 
 		OutPortB(PIC::AData, maska);
 		OutPortB(PIC::BData, maskb);
