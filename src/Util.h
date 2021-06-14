@@ -1,3 +1,5 @@
+#pragma once
+
 using byte = unsigned char;
 using word = unsigned short;
 using uint = unsigned int;
@@ -11,6 +13,16 @@ namespace
 {
 	void OutPortB(word port, byte dat)
 	{ asm("outb %1, %0" : : "dN" (port), "a" (dat)); }
+
+	template<typename T>
+	void Set(T *obj, byte val, uint count)
+	{
+		count *= sizeof(T);
+		byte *ptr = (byte *)obj;
+		
+		while (count--)
+			*ptr++ = val;
+	}
 
 	template<typename T>
 	void Copy(const T *from, T *to, uint count)

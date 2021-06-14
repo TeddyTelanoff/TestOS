@@ -1,6 +1,8 @@
 #include "Isr.h"
 using namespace Isr;
 
+#include "Idt.h"
+
 void (*Isr::stubs[Count])(Registers &) = {
 	_isr0,
 	_isr1,
@@ -50,39 +52,6 @@ void (*Isr::stubs[Count])(Registers &) = {
 	_isr45,
 	_isr46,
 	_isr47,
-};
-
-const char *Isr::exceptions[32] = {
-    "Divide by zero",
-    "Debug",
-    "NMI",
-    "Breakpoint",
-    "Overflow",
-    "OOB",
-    "Invalid opcode",
-    "No coprocessor",
-    "Double fault",
-    "Coprocessor segment overrun",
-    "Bad TSS",
-    "Segment not present",
-    "Stack fault",
-    "General protection fault",
-    "Page fault",
-    "Unrecognized interrupt",
-    "Coprocessor fault",
-    "Alignment check",
-    "Machine check",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED",
-    "RESERVED"
 };
 
 namespace

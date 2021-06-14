@@ -11,8 +11,8 @@ else
 endif
 
 GFLAGS=
-CCFLAGS=-m32 -std=c++17 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
-CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter
+CCFLAGS=-m32 -std=c++2a -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
+CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter -Wno-unused-function
 CCFLAGS+=-nostdlib -nostdinc -ffreestanding -fno-pie -fno-stack-protector
 CCFLAGS+=-fno-builtin-function -fno-builtin
 ASFLAGS=
