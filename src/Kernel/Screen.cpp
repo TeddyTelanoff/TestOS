@@ -3,11 +3,11 @@
 namespace
 {
 	byte *buffer = (byte *)0xA0000;
-	byte pixels[Screen::Height][Screen::Width] = {};
+	byte pixels[Screen::Size] = {};
 }
 
 void Screen::Clear(byte col)
-{ Set((byte *)pixels, col, ScreenSize); }
+{ Set(pixels, col, Size); }
 
 void Screen::SetPixel(int x, int y, byte col)
 {
@@ -15,10 +15,8 @@ void Screen::SetPixel(int x, int y, byte col)
 		y < 0 || y >= Height)
 			return;
 	
-	pixels[y][x] = col;
+	pixels[x + y * Width] = col;
 }
 
 void Screen::SwapBuffers()
-{
-	Copy((byte *)pixels, buffer, ScreenSize);
-}
+{ Copy(pixels, buffer, Size); }

@@ -36,7 +36,7 @@ namespace
 
 void Time::Init()
 {
-	freq = PIT::Hertz / (PIT::Hertz / Tps);
+	freq = Tps;
 	div = PIT::Hertz / freq;
 	ticks = 0;
 

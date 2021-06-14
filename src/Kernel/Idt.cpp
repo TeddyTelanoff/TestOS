@@ -35,10 +35,10 @@ void Idt::Init()
 void Idt::Set(byte i, Isr::Stub handler, word selector, byte flags)
 {
 	entries[i] = Entry {
-		(uint)handler, // offsetLow
+		(uint)handler & 0xFFFF, // offsetLow
 		selector,
 		0, // unused
 		flags | 0x60, // type
-		(uint)handler >> 16, // offsetHigh
+		(uint)handler >> 16 & 0xFFFF, // offsetHigh
 	};
 }

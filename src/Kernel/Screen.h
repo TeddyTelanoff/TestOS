@@ -10,7 +10,7 @@ namespace Screen
 	{
 		Width = 320,
 		Height = 200,
-		ScreenSize = Width * Height,
+		Size = Width * Height,
 	};
 	
 	extern void Clear(byte col = 0);

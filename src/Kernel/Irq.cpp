@@ -5,14 +5,6 @@
 
 namespace
 {
-	#define PIC_WAIT() \
-	{ \
-		asm("jmp a"); \
-		asm("a:"); \
-		asm("	jmp b"); \
-		asm("b:"); \
-	}
-
 	namespace PIC
 	{
 		enum
