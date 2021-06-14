@@ -11,11 +11,11 @@ using ulong = unsigned long long;
 
 namespace
 {
-	void OutPortB(word port, byte dat)
+	inline void OutPortB(word port, byte dat)
 	{ asm("outb %1, %0" : : "dN" (port), "a" (dat)); }
 
 	template<typename T>
-	void Set(T *obj, byte val, uint count)
+	inline void Set(T *obj, byte val, uint count)
 	{
 		count *= sizeof(T);
 		byte *ptr = (byte *)obj;
@@ -25,7 +25,7 @@ namespace
 	}
 
 	template<typename T>
-	void Copy(const T *from, T *to, uint count)
+	inline void Copy(const T *from, T *to, uint count)
 	{
 		const T *read = from;
 		T *write = to;

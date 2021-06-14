@@ -19,38 +19,7 @@ namespace Isr
 
 	using Stub = void (*)(Registers &);
 
-	const char *exceptions[32] = {
-		"Divide by zero",
-		"Debug",
-		"NMI",
-		"Breakpoint",
-		"Overflow",
-		"OOB",
-		"Invalid opcode",
-		"No coprocessor",
-		"Double fault",
-		"Coprocessor segment overrun",
-		"Bad TSS",
-		"Segment not present",
-		"Stack fault",
-		"General protection fault",
-		"Page fault",
-		"Unrecognized interrupt",
-		"Coprocessor fault",
-		"Alignment check",
-		"Machine check",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED",
-		"RESERVED"
-	};
+	extern const char *exceptions[32];
 	extern Stub stubs[Count];
 
 	extern void Init();

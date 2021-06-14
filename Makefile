@@ -22,18 +22,19 @@ BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
-KERNEL_CPP_SRCS=$(wildcard src/*.cpp)
-KERNEL_S_SRCS=$(filter-out $(BOOTSECT_SRCS), $(wildcard src/*.S))
+KERNEL_CPP_SRCS=$(wildcard src/Kernel/*.cpp)
+KERNEL_S_SRCS=$(wildcard src/Kernel/*.S)
 KERNEL_OBJS=$(KERNEL_CPP_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o)
 
 BOOTSECT=Boot.bin
 KERNEL=Kernel.bin
-IMG=./bin/Boot.img
+IMG=Boot.img
 
 all: clean img
 
 clean:
 	rm -f ./**/*.o
+	rm -f ./**/**/*.o
 	rm -f ./*.img
 	rm -f ./**/*.elf
 	rm -f ./**/*.bin
@@ -51,7 +52,7 @@ bootsect: $(BOOTSECT_OBJS)
 	$(LD) -o ./bin/$(BOOTSECT) $^ -Ttext 0x7C00 --oformat=binary -e Boot
 
 kernel: $(KERNEL_OBJS)
-	$(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/Link.ld
+	$(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/Kernel/Link.ld
 
 img: dirs bootsect kernel
 	dd if=/dev/zero of=$(IMG) bs=512 count=2880
@@ -59,7 +60,7 @@ img: dirs bootsect kernel
 	dd if=./bin/$(KERNEL) of=$(IMG) conv=notrunc bs=512 seek=1 count=2048
 
 iso: img
-	mkisofs -pad -b $(IMG) -R -o ./bin/Boot.iso $(IMG)
+	mkisofs -pad -b $(IMG) -R -o Boot.iso $(IMG)
 
 qemu-mac: img
 	qemu-system-i386 -drive format=raw,file=$(IMG) -d cpu_reset -monitor stdio -device sb16 -audiodev coreaudio,id=coreaudio,out.frequency=48000,out.channels=2,out.format=s32
