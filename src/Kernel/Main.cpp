@@ -58,13 +58,13 @@ extern "C" void Main()
 	while (true)
 	{
 		ulong now = Time::GetTime();
-		if (now - pFrame < 1)
-			continue;
-		pFrame = now;
+		if (now - pFrame > 1)
+		{
+			pFrame = now;
+			b.Update();
+		}
 
-		b.Update();
-
-		Screen::Clear(0x37);
+		Screen::Clear(0x13);
 		b.Draw();
 		Screen::SwapBuffers();
 	}
