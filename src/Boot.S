@@ -191,7 +191,7 @@ diskErrorMsg:
 
 
 chsSector:
-	.byte 1
+	.byte 0
 chsCylinder:
 	.byte 0
 chsHead:

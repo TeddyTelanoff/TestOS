@@ -2,6 +2,8 @@ OUTPUT_FORMAT("binary")
 ENTRY(KernelMain)
 SECTIONS
 {
+    . = 0x10000;
+
     .text BLOCK(4K) : ALIGN(4K)
     {
         *(.text.prologue)
@@ -22,4 +24,6 @@ SECTIONS
     {
         *(.bss)
     }
+
+    end = .;
 }

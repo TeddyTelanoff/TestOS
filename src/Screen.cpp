@@ -1,9 +1,9 @@
 #include "Screen.h"
 
 static byte *buffer = (byte *)0xA0000;
-byte pixels[SCREEN_SIZE] = {};
+byte Screen::pixels[SCREEN_SIZE] = {};
 
-void SwapBuffers()
+void Screen::SwapBuffers()
 {
 	Copy(pixels, buffer, SCREEN_SIZE);
 }

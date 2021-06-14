@@ -12,9 +12,8 @@ void DrawBox(const Box &box)
 
 extern "C" void Main()
 {
-	for (int i = 0; i < SCREEN_SIZE; i++)
-		pixels[i] = 0x2F;
-	// SwapBuffers();
+	DrawBox({ 50, 50, 50, 50 });
+	SwapBuffers();
 
 	while (true);
 }

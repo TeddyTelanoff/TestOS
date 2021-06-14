@@ -2,12 +2,23 @@
 
 enum ScreenData
 {
-	WIDTH = 360,
+	WIDTH = 320,
 	HEIGHT = 200,
 	SCREEN_SIZE = WIDTH * HEIGHT,
 };
 
-extern byte pixels[SCREEN_SIZE];
+enum class ScreenMode
+{
+	Text = 0x00,
+	Color = 0x13,
+};
+
 #define DrawPixel(x, y, col) pixels[(uint)((x) + (y) * WIDTH)] = (col)
 
-extern void SwapBuffers();
+namespace Screen
+{
+	extern byte pixels[SCREEN_SIZE];
+	extern void SwapBuffers();
+}
+
+using namespace Screen;

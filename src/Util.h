@@ -6,10 +6,6 @@ using uint = unsigned int;
 #define asm __asm__ volatile
 #endif
 
-inline void OutPortB(unsigned short port, unsigned char data) {
-    asm("outb %1, %0" : : "dN" (port), "a" (data));
-}
-
 template<typename T>
 inline void Copy(const T *from, T *to, uint count)
 {
