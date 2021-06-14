@@ -5,9 +5,7 @@
 KernelMain:
 	mov $stack, %esp
 	and $-16, %esp
-	mov $0xDEADBEEF, %eax
 	push %esp
-	push %eax
 	call Main
 	cli
 	hlt
