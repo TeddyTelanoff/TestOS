@@ -12,6 +12,8 @@ using ulong = unsigned long long;
 #define CLI() asm ("cli")
 #define STI() asm ("sti")
 
+#define PACKED __attribute__((packed))
+
 namespace
 {
 	inline byte InPortB(word port)

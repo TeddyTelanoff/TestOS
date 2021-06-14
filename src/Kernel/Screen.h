@@ -2,8 +2,6 @@
 
 #include "Util.h"
 
-#define PixelAt(i, c) pixels[i / WIDTH][i % WIDTH] = (c)
-
 namespace Screen
 {
 	enum Data

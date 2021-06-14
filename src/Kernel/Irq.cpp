@@ -60,7 +60,6 @@ namespace
 		OutPortB(PIC::BData, 2); // Cascade identitiy
 
 		OutPortB(PIC::AData, PIC::Mode8086);
-		OutPortB(PIC::AData, PIC::Mode8086);
 
 		OutPortB(PIC::AData, maska);
 		OutPortB(PIC::BData, maskb);
@@ -93,5 +92,5 @@ void Irq::Install(uint i, Isr::Stub handler)
 	CLI();
 	handlers[i] = handler;
 	ClearMask(i);
-	//STI(); // <-- This is giving me problemos
+	STI(); // <-- This is giving me problemos
 }

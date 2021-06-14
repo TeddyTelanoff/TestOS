@@ -26,7 +26,7 @@ struct Box
 		{ 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, },
 	};
 
-	int x, y;
+	float x, y;
 
 	void Draw() const
 	{
@@ -37,7 +37,7 @@ struct Box
 
 	void Update()
 	{
-		y++;
+		y += 0.3f;
 	}
 };
 

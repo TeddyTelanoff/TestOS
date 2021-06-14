@@ -9,13 +9,13 @@ namespace
 		byte _;
 		byte type;
 		word offsetHigh;
-	};
+	} PACKED;
 
 	struct Pointer
 	{
 		word limit;
 		void *base;
-	};
+	} PACKED;
 
 	Entry entries[256];
 	Pointer ptr;
