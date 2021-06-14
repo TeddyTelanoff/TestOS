@@ -9,8 +9,18 @@ using ulong = unsigned long long;
 #define asm __asm__ volatile
 #endif
 
+#define CLI() asm ("cli")
+#define STI() asm ("sti")
+
 namespace
 {
+	inline byte InPortB(word port)
+	{
+		byte r;
+		asm("inb %1, %0" : "=a" (r) : "dN" (port));
+		return r;
+	}
+
 	inline void OutPortB(word port, byte dat)
 	{ asm("outb %1, %0" : : "dN" (port), "a" (dat)); }
 

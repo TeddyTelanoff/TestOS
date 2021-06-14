@@ -1,4 +1,5 @@
 #include "Time.h"
+#include "Irq.h"
 
 namespace
 {
@@ -28,6 +29,9 @@ namespace
 		OutPortB(PIT::A, d & PIT::Mask);
 		OutPortB(PIT::A, (d >> 8) & PIT::Mask);
 	}
+
+	void Handler(Isr::Registers &regs)
+	{ ticks++; }
 }
 
 void Time::Init()
@@ -37,6 +41,7 @@ void Time::Init()
 	ticks = 0;
 
 	SetTimer(Tps);
+	Irq::Install(0, Handler);
 }
 
 ulong Time::GetTime()

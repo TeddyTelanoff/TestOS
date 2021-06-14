@@ -6,6 +6,9 @@ namespace
 	byte pixels[Screen::Height][Screen::Width] = {};
 }
 
+void Screen::Clear(byte col)
+{ Set((byte *)pixels, col, ScreenSize); }
+
 void Screen::SetPixel(int x, int y, byte col)
 {
 	if (x < 0 || x >= Width ||

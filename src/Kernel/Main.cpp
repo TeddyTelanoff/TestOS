@@ -1,4 +1,8 @@
 #include "Screen.h"
+#include "System.h"
+#include "Time.h"
+#include "Idt.h"
+#include "Isr.h"
 
 struct Box
 {
@@ -32,15 +36,33 @@ struct Box
 
 	void Update()
 	{
-		y--;
+		y++;
 	}
 };
 
 extern "C" void Main()
 {
+	Idt::Init();
+	Isr::Init();
+
 	Box b = { 1, 1, };
+	
+	Screen::Clear(0x13);
 	b.Draw();
 	Screen::SwapBuffers();
 
-	while (true);
+	ulong pFrame = 0;
+	while (true)
+	{
+		ulong now = Time::GetTime();
+		if (now - pFrame < 2)
+			continue;
+		pFrame = now;
+
+		b.Update();
+
+		Screen::Clear(0x13);
+		b.Draw();
+		Screen::SwapBuffers();
+	}
 }

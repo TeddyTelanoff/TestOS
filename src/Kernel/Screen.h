@@ -13,6 +13,7 @@ namespace Screen
 		ScreenSize = Width * Height,
 	};
 	
+	extern void Clear(byte col = 0);
 	extern void SetPixel(int x, int y, byte col);
 	extern void SwapBuffers();
 }

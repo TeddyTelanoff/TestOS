@@ -2,6 +2,7 @@
 using namespace Isr;
 
 #include "Idt.h"
+#include "System.h"
 
 void (*Isr::stubs[Count])(Registers &) = {
 	_isr0,
@@ -99,7 +100,7 @@ namespace
 
 	void ExceptionHandler(Registers &reg)
 	{
-		// TODO: Print Error
+		System::Panic();
 	}
 }
 
