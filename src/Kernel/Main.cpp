@@ -54,18 +54,18 @@ extern "C" void Main()
 	b.Draw();
 	Screen::SwapBuffers();
 
-	ulong pFrame = 0;
+	// ulong pFrame = 0;
 	while (true)
 	{
-		ulong now = Time::GetTime();
-		if (now - pFrame < Time::Tps)
-			continue;
-		pFrame = now;
+		// ulong now = Time::GetTime();
+		// if (now - pFrame < Time::Tps)
+			// continue;
+		// pFrame = now;
 
-		b.Update();
+		// b.Update();
 
-		Screen::Clear(0x13);
-		b.Draw();
+		Screen::Clear(Time::GetTime() % 256);
+		// b.Draw();
 		Screen::SwapBuffers();
 	}
 }

@@ -84,7 +84,7 @@ namespace
 	void ClearMask(uint i)
 	{
 		word port = i < 8 ? PIC::AData : PIC::BData;
-		byte val = InPortB(port) | ~(1 << i);
+		byte val = InPortB(port) & ~(1 << i);
 		OutPortB(port, val);
 	}
 }
@@ -101,5 +101,5 @@ void Irq::Install(uint i, Isr::Stub handler)
 	CLI();
 	handlers[i] = handler;
 	ClearMask(i);
-	STI();
+	STI(); // <-- This is giving me problemos
 }
