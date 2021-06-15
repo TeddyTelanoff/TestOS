@@ -4,6 +4,9 @@
 #include "Font.h"
 #include "Screen.h"
 
+extern void KeyPress(KeyCode key);
+extern void KeyRelease(KeyCode key);
+
 namespace
 {
 	using namespace Keyboard;
@@ -11,12 +14,6 @@ namespace
 	void Handler(Isr::Registers &regs)
 	{
 		word scancode = InPortB(0x60);
-		
-		static char buff[17];
-		Font::Num<0b10>(scancode, buff);
-		Screen::Clear(0x13);
-		Font::DrawStr(buff, 20, 20, 0xE);
-		Screen::SwapBuffers();
 
 		bool isPress = KEY_IS_PRESS(scancode);
 		word keyCode = KEY_SCANCODE(scancode);
@@ -36,11 +33,20 @@ namespace
 			mods = BIT_SET(mods, HIBIT(Key::Mod::ScrollLock), isPress);
 
 		latest = keyCode;
+		if (keyCode < 128)
+		{
+			keys[keyCode] = isPress;
+			if (isPress)
+				KeyPress(keyCode);
+			else
+				KeyRelease(keyCode);
+		}
 	}
 }
 
 word Keyboard::mods;
 word Keyboard::latest;
+bool Keyboard::keys[128];;
 
 void Keyboard::Init()
 { Irq::Install(1, Handler); }

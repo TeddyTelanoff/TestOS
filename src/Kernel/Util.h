@@ -33,6 +33,10 @@ using ulong = unsigned long long;
 
 namespace
 {
+	template<typename T>
+	bool BitAt(T n, uint i)
+	{ return (n >> (sizeof(T) * 8 - i - 1)) & 1; }
+
 	inline byte InPortB(word port)
 	{
 		byte r;

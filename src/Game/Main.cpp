@@ -5,92 +5,151 @@
 #include "Kernel/Font.h"
 #include "Kernel/Screen.h"
 
-struct Obj
-{
-	bool alive;
-	float x, y;
-	void (*DrawFn)(const Obj *);
-	void (*UpdateFn)(Obj *);
-
-	void Draw()
-	{
-		if (alive)
-			DrawFn(this);
-	}
-
-	void Update()
-	{
-		if (alive)
-			UpdateFn(this);
-	}
-
-	void Destroy()
-	{ alive = false; }
-};
-
-struct Box
+struct Block
 {
 	enum Data
 	{
-		Width = 9,
-		Height = 9,
-		Scale = 4,
+		Size = 4,
+		Scale = 16,
 	};
 
-	static constexpr byte Texture[Width][Height] = {
-		{ 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, },
-		{ 0x72, 0x72, 0x06, 0x06, 0x06, 0x06, 0x06, 0x72, 0x72, },
-		{ 0x72, 0x06, 0x72, 0x06, 0x06, 0x06, 0x72, 0x06, 0x72, },
-		{ 0x72, 0x06, 0x06, 0x72, 0x06, 0x72, 0x06, 0x06, 0x72, },
-		{ 0x72, 0x06, 0x06, 0x06, 0x72, 0x06, 0x06, 0x06, 0x72, },
-		{ 0x72, 0x06, 0x06, 0x72, 0x06, 0x72, 0x06, 0x06, 0x72, },
-		{ 0x72, 0x06, 0x72, 0x06, 0x06, 0x06, 0x72, 0x06, 0x72, },
-		{ 0x72, 0x72, 0x06, 0x06, 0x06, 0x06, 0x06, 0x72, 0x72, },
-		{ 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, 0x72, },
+	using Type = byte;
+	enum Types: Type
+	{
+		I,
+		L,
+		J,
+		O,
+		S,
+		T,
+		Z,
+
+		Count,
 	};
+
+	static const constexpr word Tetriminos[7][4] = {
+		{
+			0b0000111100000000,
+			0b0010001000100010,
+			0b0000000011110000,
+			0b0100010001000100,
+		},
+		{
+			0b0000010001110000,
+			0b0000001100100010,
+			0b0000000001110001,
+			0b0000001000100110,
+		},
+		{
+			0b0000001011100000,
+			0b0000010001000110,
+			0b0000000011101000,
+			0b0000110001000100,
+		},
+		{
+			0b0000011001100000,
+			0b0000011001100000,
+			0b0000011001100000,
+			0b0000011001100000,
+		},
+		{
+			0b0000011011000000,
+			0b0000010001100010,
+			0b0000000001101100,
+			0b0000100011000100,
+		},
+		{
+			0b0000010011100000,
+			0b0000010001100100,
+			0b0000000011100100,
+			0b0000010011000100,
+		},
+		{
+			0b0000011000110000,
+			0b0000000100110010,
+			0b0000000001100011,
+			0b0000001001100100,
+		},
+	};
+
+	bool alive;
+	uint x, y, rot;
+	Type type;
+
+	void Draw() const
+	{
+		for (uint py = 0; py < Size * Scale; py++)
+			for (uint px = 0; px < Size * Scale; px++)
+			{
+				uint tx = px / Scale, ty = py / Scale;
+				if (BitAt(Tetriminos[type][rot], tx + ty * Size))
+				{
+					if ((px % Scale == 0) || (py % Scale == 0))
+						Screen::SetPixel(x * Scale + px, y * Scale + py, 0x06);
+					else
+						Screen::SetPixel(x * Scale + px, y * Scale + py, 0x0C);
+				}
+			}
+	}
 };
 
-void BoxDraw(const Obj *This)
-{
-	for (int py = 0; py < Box::Height * Box::Scale; py++)
-		for (int px = 0; px < Box::Width * Box::Scale; px++)
-			Screen::SetPixel(This->x * Box::Scale + px, This->y * Box::Scale + py, Box::Texture[px / Box::Scale][py / Box::Scale]);
-}
+#define NUM_BLOCKS 64
+Block blocks[NUM_BLOCKS] { { true, 2, 2, 0, Block::O }, };
 
-void BoxUpdate(Obj *This)
-{
-	This->y += 0.3f;
-	if (This->y * Box::Scale >= Screen::Height)
-		This->Destroy();
-}
-
-Obj objects[64] {};
+Block test = { true };
+static char typeBuff[2];
+static char rotBuff[2];
 
 void Main()
 {
 	ulong pFrame = 0;
-	while (true);
+	while (true)
 	{
 		ulong now = Time::GetTime();
-		if (now - pFrame > 1)
+		if (now != pFrame)
 		{
 			pFrame = now;
 
-			for (uint i = 0; i < 64; i++)
-			{
-				objects[i].Update();
-				if (!objects[i].alive && !System::Random<uint>(1000))
-					objects[i] = { true, System::Random<float>(Screen::Width / Box::Scale), -Box::Height, BoxDraw, BoxUpdate, };
-			}
+			
 		}
 
 		Screen::Clear(0x13);
-		for (uint i = 0; i < 64; i++)
-			objects[i].Draw();
-
-		static char buff[16];
-		Font::Num<0x10>(Keyboard::latest, buff);
-		Font::DrawStr(buff, 5, 5);
+		// for (const auto &block : blocks)
+		// 	if (block.alive)
+		// 		block.Draw();
+		test.Draw();
+		Font::DrawStr(typeBuff, 5, 5);
+		Font::DrawStr(rotBuff, 5, 15);
 		Screen::SwapBuffers();
 	}
+}
+
+void KeyPress(KeyCode) {}
+
+void KeyRelease(KeyCode keyCode)
+{
+	switch (keyCode)
+	{
+	case Key::LeftArrow:
+		test.type--;
+		if (test.type > Block::Count)
+			test.type = Block::Count - 1;
+		break;
+	case Key::RightArrow:
+		test.type = (test.type + 1) % Block::Count;
+		break;
+	case Key::R:
+		if (Keyboard::mods & Key::Mod::Shift)
+		{
+			test.rot--;
+			if (test.rot > 4)
+				test.rot = 3;
+		}
+		else
+			test.rot = (test.rot + 1) % 4;
+		break;
+	}
+
+	Font::FNum(test.type, typeBuff);
+	Font::FNum(test.rot, rotBuff);
 }

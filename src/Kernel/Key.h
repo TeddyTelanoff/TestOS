@@ -18,6 +18,18 @@ namespace Key
 	{
 		Null,
 
+		A = 0x1E,
+		W = 0x11,
+		D = 0x20,
+		S = 0x1F,
+
+		R = 0x13,
+
+		LeftArrow = 0x4B,
+		UpArrow = 0x48,
+		RightArrow = 0x4D,
+		DownArrow = 0x50,
+
 		Ctrl = 0x1D,
 		Alt = 0x38,
 		LeftShift = 0x2A,
@@ -25,8 +37,6 @@ namespace Key
 		CapsLock = 0x3A,
 		ScrollLock = 0x46,
 		NumLock = 0x45,
-
-		Count,
 	};
 
 	namespace Mod

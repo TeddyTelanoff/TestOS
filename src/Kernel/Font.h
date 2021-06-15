@@ -5,14 +5,14 @@
 
 namespace Font
 {
-	template<uint base, uint len>
-	inline void Num(uint num, char (&buff)[len])
+	template<uint base = 10, uint len>
+	inline void FNum(uint num, char (&buff)[len])
 	{
 		uint digit;
 		for (uint i = len - 1; i; i--)
 		{
 			digit = num % base;
-			buff[i - 1] = digit < 10 ? digit + '0' : digit + 'A';
+			buff[i - 1] = digit < 10 ? digit + '0' : digit - 10 + 'A';
 			num /= base;
 		}
 

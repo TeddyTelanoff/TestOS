@@ -11,6 +11,7 @@ namespace Keyboard
 
 	extern word latest;
 	extern word mods;
+	extern bool keys[128];
 
 	void Init();
 }
