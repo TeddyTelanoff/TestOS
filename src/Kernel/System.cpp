@@ -2,9 +2,9 @@
 #include "Screen.h"
 #include "Font.h"
 
-ulong System::randSeed;
+uint System::randSeed;
 
-ulong System::Hash(ulong n)
+uint System::Hash(uint n)
 {
 	n ^= 2747636419;
 	n *= 2654435769;
@@ -15,6 +15,16 @@ ulong System::Hash(ulong n)
 	n ^= n >> 16;
 	n *= 2654435769;
 	return n;
+}
+
+void System::Log(const char *msg, uint duration)
+{
+	Screen::Clear(0x0);
+	Font::DrawStr(msg, 5, 5, 0x0F);
+	Screen::SwapBuffers();
+
+	uint now = Time::GetTime();
+	while (Time::GetTime() - now <= duration);
 }
 
 void System::Panic(const char *err)
@@ -40,30 +50,10 @@ template<>
 bool System::Random()
 { return Hash(randSeed++) & 1; }
 
-RAND(ulong)
-RAND(uint)
-RAND(word)
-RAND(byte)
-
-
 template<>
 float System::Random(float max)
 { return ((float)Hash(randSeed++) * max / (float)0xFFFFFFFFFFFFFFFF); }
 
-
-// RAND_MAX(ulong)
-RAND_MAX(uint)
-RAND_MAX(word)
-RAND_MAX(byte)
-
-
-
 template<>
 float System::Random(float min, float max)
 { return ((float)Hash(randSeed++) / (float)0xFFFFFFFFFFFFFFFF) * (max - min) + min; }
-
-
-// RAND_RANGE(ulong)
-RAND_RANGE(uint)
-RAND_RANGE(word)
-RAND_RANGE(byte)

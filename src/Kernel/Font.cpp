@@ -147,10 +147,17 @@ void Font::DrawChar(char c, uint x, uint y, byte col)
 
 void Font::DrawStr(const char *str, uint x, uint y, byte col)
 {
+	uint startX = x;
+
 	char c;
 	while ((c = *str++))
 	{
 		DrawChar(c, x, y, col);
 		x += 8;
+		if (x + 8 >= Screen::Width)
+		{
+			y += 8;
+			x = startX;
+		}
 	}
 }
