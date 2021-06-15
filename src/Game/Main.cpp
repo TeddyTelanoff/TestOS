@@ -5,12 +5,22 @@
 #include "Kernel/Font.h"
 #include "Kernel/Screen.h"
 
+namespace Board
+{
+	enum Data
+	{
+		Scale = 12,
+		Width = Screen::Width / Scale,
+		Height = Screen::Height / Scale,
+	};
+}
+
 struct Block
 {
 	enum Data
 	{
 		Size = 4,
-		Scale = 16,
+		Scale = Board::Scale,
 	};
 
 	using Type = byte;
@@ -83,7 +93,7 @@ struct Block
 	};
 
 	bool alive;
-	uint x, y, rot;
+	int x, y, rot;
 	Type type;
 
 	void Draw() const
@@ -94,7 +104,7 @@ struct Block
 				uint tx = px / Scale, ty = py / Scale;
 				if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 				{
-					if ((px % Scale == 0) || (py % Scale == 0))
+					if (((px + 1) % Scale <= 1) || ((py + 1) % Scale <= 1))
 						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][1]);
 					else
 						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][0]);
@@ -104,15 +114,8 @@ struct Block
 };
 
 #define NUM_BLOCKS 64
-Block blocks[Block::Count] = {
-	{ true, 0, 0, 0, Block::I },
-	{ true, 4, 0, 0, Block::L },
-	{ true, 8, 0, 0, Block::J },
-	{ true, 12, 0, 0, Block::O },
-	{ true, 16, 0, 0, Block::S },
-	{ true, 4, 4, 0, Block::T },
-	{ true, 12, 4, 0, Block::Z },
-};
+Block *current;
+Block blocks[NUM_BLOCKS] = {};
 static char typeBuff[2];
 static char rotBuff[2];
 
@@ -122,12 +125,29 @@ void Main()
 	while (true)
 	{
 		ulong now = Time::GetTime();
-		if (now != pFrame)
+		if (now - pFrame > Time::Tps)
 		{
 			pFrame = now;
+			if (current)
+				current->y++;
+			else
+			{
+				// TODO: Optimize
+				for (uint i = 0; i < NUM_BLOCKS; i++)
+					if (!blocks[i].alive)
+					{
+						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random<uint>(Block::Count), };
+						current = &blocks[i];
+						break;
+					}
+			}
 		}
 
 		Screen::Clear(0x13);
+		for (uint y = 0; y < Board::Height; y++)
+			for (uint x = 0; x < Board::Width; x++)
+				Screen::SetPixel(x * Board::Scale, y * Board::Scale, 0x08);
+
 		for (const auto &block : blocks)
 			if (block.alive)
 				block.Draw();
@@ -137,32 +157,30 @@ void Main()
 	}
 }
 
-void KeyPress(KeyCode) {}
-
-void KeyRelease(KeyCode keyCode)
+void KeyPress(KeyCode keyCode, word mods)
 {
-	// switch (keyCode)
-	// {
-	// case Key::LeftArrow:
-	// 	test.type--;
-	// 	if (test.type > Block::Count)
-	// 		test.type = Block::Count - 1;
-	// 	break;
-	// case Key::RightArrow:
-	// 	test.type = (test.type + 1) % Block::Count;
-	// 	break;
-	// case Key::R:
-	// 	if (Keyboard::mods & Key::Mod::Shift)
-	// 	{
-	// 		test.rot--;
-	// 		if (test.rot > 4)
-	// 			test.rot = 3;
-	// 	}
-	// 	else
-	// 		test.rot = (test.rot + 1) % 4;
-	// 	break;
-	// }
+	if (current == null)
+		return;
 
-	// Font::FNum(test.type, typeBuff);
-	// Font::FNum(test.rot, rotBuff);
-}
+	switch (keyCode)
+	{
+	case Key::LeftArrow:
+		current->x--;
+		break;
+	case Key::RightArrow:
+		current->x++;
+		break;
+	case Key::R:
+		if (Keyboard::mods & Key::Mod::Shift)
+		{
+			current->rot--;
+			if (current->rot > 4)
+				current->rot = 3;
+		}
+		else
+			current->rot = (current->rot + 1) % 4;
+		break;
+	}}
+
+void KeyRelease(KeyCode keyCode, word mods)
+{}

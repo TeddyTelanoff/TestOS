@@ -4,8 +4,8 @@
 #include "Font.h"
 #include "Screen.h"
 
-extern void KeyPress(KeyCode key);
-extern void KeyRelease(KeyCode key);
+extern void KeyPress(KeyCode key, word mods);
+extern void KeyRelease(KeyCode key, word mods);
 
 namespace
 {
@@ -37,16 +37,16 @@ namespace
 		{
 			keys[keyCode] = isPress;
 			if (isPress)
-				KeyPress(keyCode);
+				KeyPress(keyCode, mods);
 			else
-				KeyRelease(keyCode);
+				KeyRelease(keyCode, mods);
 		}
 	}
 }
 
 word Keyboard::mods;
 word Keyboard::latest;
-bool Keyboard::keys[128];;
+bool Keyboard::keys[128];
 
 void Keyboard::Init()
 { Irq::Install(1, Handler); }

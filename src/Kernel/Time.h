@@ -6,7 +6,7 @@ namespace Time
 {
 	enum Data
 	{
-		Tps = 60,
+		Tps = 363,
 	};
 
 	extern void Init();

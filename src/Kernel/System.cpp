@@ -20,7 +20,10 @@ ulong System::Hash(ulong n)
 void System::Panic(const char *err)
 {
 	Screen::Clear(0x37);
-	Font::DrawStr(err, 5, 5, 0x0F);
+	if (err == null)
+		Font::DrawStr("System Panic Called", 5, 5, 0x0F);
+	else
+		Font::DrawStr(err, 5, 5, 0x0F);
 	Screen::SwapBuffers();
 	while (true);
 }
