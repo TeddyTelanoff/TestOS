@@ -65,7 +65,7 @@ img: dirs bootsect kernel
 	dd if=./bin/$(BOOTSECT) of=$(IMG) conv=notrunc bs=512 seek=0 count=1
 	dd if=./bin/$(KERNEL) of=$(IMG) conv=notrunc bs=512 seek=1 count=2048
 
-iso: img
+iso: clean img finish
 	mkisofs -pad -b $(IMG) -R -o Boot.iso $(IMG)
 
 qemu-mac: img
