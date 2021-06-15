@@ -3,6 +3,8 @@
 #include "Isr.h"
 #include "Irq.h"
 
+#include "Keyboard.h"
+
 extern void Main();
 
 extern "C" void Init()
@@ -11,6 +13,8 @@ extern "C" void Init()
 	Isr::Init();
 	Irq::Init();
 	Time::Init();
+
+	Keyboard::Init();
 
 	Main();
 }

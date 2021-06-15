@@ -1,8 +1,8 @@
 #include "Kernel/Screen.h"
 #include "Kernel/System.h"
 #include "Kernel/Time.h"
-
-
+#include "Kernel/Keyboard.h"
+#include "Kernel/Font.h"
 #include "Kernel/Screen.h"
 
 struct Obj
@@ -87,6 +87,10 @@ void Main()
 		Screen::Clear(0x13);
 		for (uint i = 0; i < 64; i++)
 			objects[i].Draw();
+
+		static char buff[16];
+		Font::Hex(Keyboard::latest, buff);
+		Font::DrawStr(buff, 5, 5);
 		Screen::SwapBuffers();
 	}
 }

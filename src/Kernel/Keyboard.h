@@ -9,8 +9,8 @@ namespace Keyboard
 
 	extern Layout LayoutUs;
 
+	extern word latest;
 	extern word mods;
-	extern byte keys[Key::Count];
 
 	void Init();
 }
