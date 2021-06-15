@@ -69,7 +69,7 @@ Obj objects[64] {};
 void Main()
 {
 	ulong pFrame = 0;
-	while (true)
+	while (true);
 	{
 		ulong now = Time::GetTime();
 		if (now - pFrame > 1)
@@ -89,7 +89,7 @@ void Main()
 			objects[i].Draw();
 
 		static char buff[16];
-		Font::Hex(Keyboard::latest, buff);
+		Font::Num<0x10>(Keyboard::latest, buff);
 		Font::DrawStr(buff, 5, 5);
 		Screen::SwapBuffers();
 	}

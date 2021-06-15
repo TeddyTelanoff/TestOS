@@ -5,52 +5,18 @@
 
 namespace Font
 {
-	template<uint len>
-	inline void Decimal(uint num, char (&buff)[len])
+	template<uint base, uint len>
+	inline void Num(uint num, char (&buff)[len])
 	{
-		byte digit;
-		uint i = 0;
-
-		do
+		uint digit;
+		for (uint i = len - 1; i; i--)
 		{
-			digit = num % 10;
-			buff[i++] = digit + '0';
-		} while (num /= 10);
-		
-		if (i >= len)
-			System::Panic("Itioa: Buffer too small");
-		buff[i--] = null;
-
-		for (uint j = 0; j < i; j++, i--)
-		{
-			digit = buff[j];
-			buff[j] = buff[i];
-			buff[i] = digit;
+			digit = num % base;
+			buff[i - 1] = digit < 10 ? digit + '0' : digit + 'A';
+			num /= base;
 		}
-	}
 
-	template<uint len>
-	inline void Hex(uint num, char (&buff)[len])
-	{
-		byte digit;
-		uint i = 0;
-
-		do
-		{
-			digit = num % 0x10;
-			buff[i++] = digit < 10 ? digit + '0' : digit - 10 + 'A';
-		} while (num /= 0x10);
-		
-		if (i >= len)
-			System::Panic("Itioa: Buffer too small");
-		buff[i--] = null;
-
-		for (uint j = 0; j < i; j++, i--)
-		{
-			digit = buff[j];
-			buff[j] = buff[i];
-			buff[i] = digit;
-		}
+		buff[len - 1] = null;
 	}
 
 	void DrawChar(char c, uint x, uint y, byte col = 0xF);
