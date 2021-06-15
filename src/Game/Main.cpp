@@ -27,6 +27,16 @@ struct Block
 		Count,
 	};
 
+	static const constexpr byte Colors[Types::Count][2] = {
+		0x4F, 0x37,
+		0x09, 0x01,
+		0x2A, 0x06,
+		0x0E, 0x74,
+		0x2F, 0x02,
+		0x0D, 0x05,
+		0x28, 0x04,
+	};
+
 	static const constexpr word Tetriminos[7][4] = {
 		{
 			0b0000111100000000,
@@ -85,18 +95,24 @@ struct Block
 				if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 				{
 					if ((px % Scale == 0) || (py % Scale == 0))
-						Screen::SetPixel(x * Scale + px, y * Scale + py, 0x06);
+						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][1]);
 					else
-						Screen::SetPixel(x * Scale + px, y * Scale + py, 0x0C);
+						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][0]);
 				}
 			}
 	}
 };
 
 #define NUM_BLOCKS 64
-Block blocks[NUM_BLOCKS] { { true, 2, 2, 0, Block::O }, };
-
-Block test = { true };
+Block blocks[Block::Count] = {
+	{ true, 0, 0, 0, Block::I },
+	{ true, 4, 0, 0, Block::L },
+	{ true, 8, 0, 0, Block::J },
+	{ true, 12, 0, 0, Block::O },
+	{ true, 16, 0, 0, Block::S },
+	{ true, 4, 4, 0, Block::T },
+	{ true, 12, 4, 0, Block::Z },
+};
 static char typeBuff[2];
 static char rotBuff[2];
 
@@ -109,15 +125,12 @@ void Main()
 		if (now != pFrame)
 		{
 			pFrame = now;
-
-			
 		}
 
 		Screen::Clear(0x13);
-		// for (const auto &block : blocks)
-		// 	if (block.alive)
-		// 		block.Draw();
-		test.Draw();
+		for (const auto &block : blocks)
+			if (block.alive)
+				block.Draw();
 		Font::DrawStr(typeBuff, 5, 5);
 		Font::DrawStr(rotBuff, 5, 15);
 		Screen::SwapBuffers();
@@ -128,28 +141,28 @@ void KeyPress(KeyCode) {}
 
 void KeyRelease(KeyCode keyCode)
 {
-	switch (keyCode)
-	{
-	case Key::LeftArrow:
-		test.type--;
-		if (test.type > Block::Count)
-			test.type = Block::Count - 1;
-		break;
-	case Key::RightArrow:
-		test.type = (test.type + 1) % Block::Count;
-		break;
-	case Key::R:
-		if (Keyboard::mods & Key::Mod::Shift)
-		{
-			test.rot--;
-			if (test.rot > 4)
-				test.rot = 3;
-		}
-		else
-			test.rot = (test.rot + 1) % 4;
-		break;
-	}
+	// switch (keyCode)
+	// {
+	// case Key::LeftArrow:
+	// 	test.type--;
+	// 	if (test.type > Block::Count)
+	// 		test.type = Block::Count - 1;
+	// 	break;
+	// case Key::RightArrow:
+	// 	test.type = (test.type + 1) % Block::Count;
+	// 	break;
+	// case Key::R:
+	// 	if (Keyboard::mods & Key::Mod::Shift)
+	// 	{
+	// 		test.rot--;
+	// 		if (test.rot > 4)
+	// 			test.rot = 3;
+	// 	}
+	// 	else
+	// 		test.rot = (test.rot + 1) % 4;
+	// 	break;
+	// }
 
-	Font::FNum(test.type, typeBuff);
-	Font::FNum(test.rot, rotBuff);
+	// Font::FNum(test.type, typeBuff);
+	// Font::FNum(test.rot, rotBuff);
 }
