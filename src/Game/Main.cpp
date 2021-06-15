@@ -101,27 +101,16 @@ struct Block
 	bool DoesFit(int x, int y, int rot) const;
 	void Place();
 
-	void Draw() const
-	{
-		for (uint py = 0; py < Size * Scale; py++)
-			for (uint px = 0; px < Size * Scale; px++)
-			{
-				uint tx = px / Scale, ty = py / Scale;
-				if (BitAt(Tetriminos[type][rot], tx + ty * Size))
-				{
-					if (((px + 1) % Scale <= 1) || ((py + 1) % Scale <= 1))
-						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][1]);
-					else
-						Screen::SetPixel(x * Scale + px, y * Scale + py, Colors[type][0]);
-				}
-			}
-	}
+	void Draw() const;
 };
 
 #define NUM_BLOCKS 64
 Block *current;
 Block blocks[NUM_BLOCKS] = {};
 Block::Type board[Board::Width][Board::Height];
+
+static uint startX = Screen::Width / 2 - Board::Width * Board::Scale / 2, endX = Screen::Width / 2 + Board::Width * Board::Scale / 2;
+static uint startY = 0, endY = Board::Height * Board::Scale;
 
 bool Block::DoesFit(int x, int y, int rot) const
 {
@@ -145,20 +134,64 @@ void Block::Place()
 	current = null;
 
 	for (int ty = 0; ty < Size; ty++)
+	{
 		for (int tx = 0; tx < Size; tx++)
 			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 				board[x + tx][y + ty] = type;
+		
+		bool rowComplete = true;
+		for (uint tx = 0; tx < Board::Width; tx++)
+			if (board[tx][y + ty] == Block::None)
+			{
+				rowComplete = false;
+				break;
+			}
+		
+		if (rowComplete)
+		{
+			for (uint tx = 0; tx < Board::Width; tx++)
+			{
+				board[tx][y + ty] = Block::None;
+
+				for (uint uy = Board::Height; uy > 1; uy--)
+				{
+					board[tx][uy - 1] = board[tx][uy - 2];
+				}
+
+				board[tx][0] = Block::None;
+			}
+		}
+	}
+}
+void Block::Draw() const
+{
+	for (uint py = 0; py < Size * Scale; py++)
+		for (uint px = 0; px < Size * Scale; px++)
+		{
+			uint tx = px / Scale, ty = py / Scale;
+			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
+			{
+				if (((px + 1) % Scale <= 1) || ((py + 1) % Scale <= 1))
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][1]);
+				else
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][0]);
+			}
+		}
 }
 
 void Draw()
 {
-	for (uint py = 0; py < Screen::Height; py++)
-		for (uint px = 0; px < Screen::Width; px++)
+	for (uint py = startY; py < endY; py++)
+		for (uint px = startX; px < endX; px++)
 		{
-			uint tx = px / Block::Scale, ty = py / Block::Scale;
+			uint tx = (px - startX) / Block::Scale, ty = (py - startY) / Block::Scale;
 			Block::Type type = board[tx][ty];
 			if (type == Block::None)
+			{
+				if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
+					Screen::SetPixel(px, py, 0x08);
 				continue;
+			}
 
 			if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
 				Screen::SetPixel(px, py, Block::Colors[type][1]);
@@ -199,10 +232,6 @@ void Main()
 		}
 
 		Screen::Clear(0x13);
-		for (uint y = 0; y < Board::Height; y++)
-			for (uint x = 0; x < Board::Width; x++)
-				Screen::SetPixel(x * Board::Scale, y * Board::Scale, 0x08);
-
 		Draw();
 		if (current)
 			current->Draw();
@@ -239,8 +268,6 @@ void KeyPress(KeyCode keyCode, word mods)
 			tryRot--;
 			if (tryRot < 0)
 				tryRot = 3;
-			else
-				current = null;
 		}
 		else
 			tryRot = (tryRot + 1) % 4;
