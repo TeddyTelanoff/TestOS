@@ -66,4 +66,12 @@ namespace
 		while (count--)
 			*write++ = *read++;
 	}
+
+	inline uint StrLen(const char *str)
+	{
+		uint len = 0;
+		while (*str++)
+			len++;
+		return len;
+	}
 }

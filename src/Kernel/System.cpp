@@ -20,7 +20,7 @@ uint System::Hash(uint n)
 void System::Log(const char *msg, uint duration)
 {
 	Screen::Clear(0x0);
-	Font::DrawStr(msg, 5, 5, 0x0F);
+	Font::DrawStr(msg, 4, 4, 0x0F);
 	Screen::SwapBuffers();
 
 	uint now = Time::GetTime();
@@ -31,9 +31,9 @@ void System::Panic(const char *err)
 {
 	Screen::Clear(0x37);
 	if (err == null)
-		Font::DrawStr("System Panic Called", 5, 5, 0x0F);
+		Font::DrawStr("System Panic Called!", 4, 4, 0x0F);
 	else
-		Font::DrawStr(err, 5, 5, 0x0F);
+		Font::DrawStr(err, 4, 4, 0x0F);
 	Screen::SwapBuffers();
 	while (true);
 }

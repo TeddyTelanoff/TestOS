@@ -224,8 +224,11 @@ void Main()
 				for (uint i = 0; i < NUM_BLOCKS; i++)
 					if (!blocks[i].alive)
 					{
-						blocks[i] = { true, Board::Width / 2 - 2, 1, System::Random(4), System::Random(Block::Count), };
+						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::Count), };
 						current = &blocks[i];
+
+						if (!current->DoesFit(current->x, current->y + 1, current->rot))
+							System::Panic("You Lost :(");
 						break;
 					}
 			}
