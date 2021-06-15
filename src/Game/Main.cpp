@@ -105,6 +105,7 @@ struct Block
 };
 
 #define NUM_BLOCKS 64
+bool started;
 Block *current;
 Block blocks[NUM_BLOCKS] = {};
 Block::Type board[Board::Width][Board::Height];
@@ -200,11 +201,21 @@ void Draw()
 		}
 }
 
+void Restart();
+
 void Main()
 {
 	Set((Block::Type *)board, Block::None, Board::Size);
 
 	ulong pFrame = 0;
+	while (!started)
+	{
+		Screen::Clear(0x13);
+		const char msg[] = "Press any key to start...";
+		Font::DrawStr(msg, Screen::Width / 2 - (sizeof(msg) - 1) * 4, Screen::Height / 2 + 15);
+		Screen::SwapBuffers();
+	}
+
 	while (true)
 	{
 		ulong now = Time::GetTime();
@@ -228,7 +239,10 @@ void Main()
 						current = &blocks[i];
 
 						if (!current->DoesFit(current->x, current->y + 1, current->rot))
-							System::Panic("You Lost :(");
+						{
+							System::Log("You Lost :(", 2);
+							Restart();
+						}
 						break;
 					}
 			}
@@ -244,6 +258,16 @@ void Main()
 
 void KeyPress(KeyCode keyCode, word mods)
 {
+	if (!started)
+	{
+		started = true;
+		System::randSeed = Time::GetTime();
+
+		static char buff[16];
+		Font::FNum(System::randSeed, buff);
+		return;
+	}
+
 	if (current == null)
 		return;
 
@@ -265,8 +289,11 @@ void KeyPress(KeyCode keyCode, word mods)
 		break;
 	case Key::R:
 	{
+		if (mods & (Key::Mod::Ctrl | Key::Mod::Alt))
+			Restart();
+
 		int tryRot = current->rot;
-		if (Keyboard::mods & Key::Mod::Shift)
+		if (mods & Key::Mod::Shift)
 		{
 			tryRot--;
 			if (tryRot < 0)
@@ -283,3 +310,10 @@ void KeyPress(KeyCode keyCode, word mods)
 
 void KeyRelease(KeyCode keyCode, word mods)
 {}
+
+void Restart()
+{
+	current = null;
+	Set(blocks, 0, NUM_BLOCKS);
+	Set((Block::Type *)board, Block::None, Board::Size);
+}

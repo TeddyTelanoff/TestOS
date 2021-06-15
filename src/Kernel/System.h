@@ -14,6 +14,7 @@ namespace System
 	extern uint Hash(uint);
 	extern void Log(const char *msg, uint durationInTicks = Time::Tps);
 	extern void Panic(const char *err = nullptr);
+	extern void ReBoot();
 
 	template<typename T>
 	inline T Random()

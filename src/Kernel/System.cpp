@@ -17,9 +17,14 @@ uint System::Hash(uint n)
 	return n;
 }
 
+void System::ReBoot()
+{
+	// Unimplemented...
+}
+
 void System::Log(const char *msg, uint duration)
 {
-	Screen::Clear(0x0);
+	Screen::Clear(0x37);
 	Font::DrawStr(msg, 4, 4, 0x0F);
 	Screen::SwapBuffers();
 
