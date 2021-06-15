@@ -16,6 +16,21 @@ using ulong = unsigned long long;
 
 #define null 0
 
+// Returns the highest set bit of x
+// i.e. if x == 0xF, HIBIT(x) == 3 (4th index)
+// WARNING: currently only works for up to 32-bit types
+#define HIBIT(_x) (31 - __builtin_clz((_x)))
+
+// Returns the lowest set bit of x
+#define LOBIT(_x)\
+    __extension__({ __typeof__(_x) __x = (_x); HIBIT(__x & -__x); })
+
+// Returns v with n-th bit = x
+#define BIT_SET(v, n, x) __extension__( {\
+        __typeof__(v) _v = (v); \
+        (_v ^ ((-(x) ^ _v) & (1 << (n)))); \
+        })
+
 namespace
 {
 	inline byte InPortB(word port)
