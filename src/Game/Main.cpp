@@ -75,10 +75,11 @@ void Main()
 		if (now - pFrame > 1)
 		{
 			pFrame = now;
+
 			for (uint i = 0; i < 64; i++)
 			{
 				objects[i].Update();
-				if (!objects[i].alive && System::Random<bool>())
+				if (!objects[i].alive && !System::Random<uint>(1000))
 					objects[i] = { true, System::Random<float>(Screen::Width / Box::Scale), -Box::Height, BoxDraw, BoxUpdate, };
 			}
 		}
