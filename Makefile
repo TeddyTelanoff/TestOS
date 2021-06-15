@@ -38,6 +38,7 @@ clean:
 	rm -f ./**/**/*.o
 	rm -f ./*.img
 	rm -f ./**/*.elf
+	rm -f ./*.iso
 	rm -f ./**/*.bin
 
 finish:

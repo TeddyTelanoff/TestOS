@@ -108,7 +108,7 @@ struct Block
 bool started;
 Block *current;
 Block blocks[NUM_BLOCKS] = {};
-Block::Type board[Board::Width][Board::Height];
+Block::Type board[Board::Height][Board::Width];
 
 static uint startX = Screen::Width / 2 - Board::Width * Board::Scale / 2, endX = Screen::Width / 2 + Board::Width * Board::Scale / 2;
 static uint startY = 0, endY = Board::Height * Board::Scale;
@@ -117,15 +117,20 @@ bool Block::DoesFit(int x, int y, int rot) const
 {
 	for (int ty = 0; ty < Size; ty++)
 		for (int tx = 0; tx < Size; tx++)
+		{
+			int rx = x + tx, ry = y + ty;
 			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 			{
-				if (x + tx < 0 || x + tx >= Board::Width)
+				if (rx < 0 || rx >= Board::Width)
 					return false;
-				if (y + ty >= Board::Height)
+				if (ry >= Board::Height)
 					return false;
-				if (board[x + tx][y + ty] != Block::None)
+				if (ry < 0)
+					continue;
+				if (board[ry][rx] != Block::None)
 					return false;
 			}
+		}
 	
 	return true;
 }
@@ -135,33 +140,26 @@ void Block::Place()
 	current = null;
 
 	for (int ty = 0; ty < Size; ty++)
-	{
 		for (int tx = 0; tx < Size; tx++)
 			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
-				board[x + tx][y + ty] = type;
-		
-		bool rowComplete = true;
-		for (uint tx = 0; tx < Board::Width; tx++)
-			if (board[tx][y + ty] == Block::None)
+				board[y + ty][x + tx] = type;
+
+	for (uint y = 0; y < Board::Height; y++)
+	{
+		bool line = true;
+		for (uint x = 0; x < Board::Width; x++)
+			if (board[y][x] == Block::None)
 			{
-				rowComplete = false;
+				line = false;
 				break;
 			}
-		
-		if (rowComplete)
-		{
-			for (uint tx = 0; tx < Board::Width; tx++)
-			{
-				board[tx][y + ty] = Block::None;
 
-				for (uint uy = Board::Height; uy > 1; uy--)
-				{
-					board[tx][uy - 1] = board[tx][uy - 2];
-				}
+		if (!line)
+			continue;
 
-				board[tx][0] = Block::None;
-			}
-		}
+		if (y != 0)
+			Move((byte *)board[0], (byte *)board[1], sizeof(board[0]) * y);
+		Set((Block::Type *)board, Block::None, Board::Width);
 	}
 }
 void Block::Draw() const
@@ -186,7 +184,7 @@ void Draw()
 		for (uint px = startX; px < endX; px++)
 		{
 			uint tx = (px - startX) / Block::Scale, ty = (py - startY) / Block::Scale;
-			Block::Type type = board[tx][ty];
+			Block::Type type = board[ty][tx];
 			if (type == Block::None)
 			{
 				if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
@@ -238,9 +236,9 @@ void Main()
 						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::Count), };
 						current = &blocks[i];
 
-						if (!current->DoesFit(current->x, current->y + 1, current->rot))
+						if (!current->DoesFit(current->x, current->y, current->rot))
 						{
-							System::Log("You Lost :(", 2);
+							System::Log("You Lost :(", Time::Tps * 2);
 							Restart();
 						}
 						break;

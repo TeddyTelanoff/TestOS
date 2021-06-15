@@ -67,6 +67,19 @@ namespace
 			*write++ = *read++;
 	}
 
+	template<typename T>
+	inline void Move(const T *from, T *to, uint count)
+	{
+		if (to < from)
+		{
+			Copy(from, to, count);
+			return;
+		}
+
+		for (uint i = count; i; i--)
+			to[i - 1] = from[i - 1];
+	}
+
 	inline uint StrLen(const char *str)
 	{
 		uint len = 0;
