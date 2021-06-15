@@ -15,6 +15,7 @@ CCFLAGS=-m32 -std=c++2a -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing
 CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter -Wno-unused-function
 CCFLAGS+=-nostdlib -nostdinc -ffreestanding -fno-pie -fno-stack-protector
 CCFLAGS+=-fno-builtin-function -fno-builtin
+CCFLAGS+=-I src
 ASFLAGS=
 LDFLAGS=
 
@@ -22,7 +23,7 @@ BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
-KERNEL_CPP_SRCS=$(wildcard src/Kernel/*.cpp)
+KERNEL_CPP_SRCS=$(wildcard src/Kernel/*.cpp) $(wildcard src/Game/*.cpp)
 KERNEL_S_SRCS=$(wildcard src/Kernel/*.S)
 KERNEL_OBJS=$(KERNEL_CPP_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o)
 

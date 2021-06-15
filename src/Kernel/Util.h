@@ -14,6 +14,8 @@ using ulong = unsigned long long;
 
 #define PACKED __attribute__((packed))
 
+#define null 0
+
 namespace
 {
 	inline byte InPortB(word port)

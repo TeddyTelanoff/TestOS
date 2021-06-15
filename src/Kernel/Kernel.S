@@ -6,7 +6,7 @@ KernelMain:
 	mov $stack, %esp
 	and $-16, %esp
 	push %esp
-	call Main
+	call Init
 
 .section .data
 .align 32
