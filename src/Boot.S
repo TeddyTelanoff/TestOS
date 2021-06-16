@@ -66,10 +66,6 @@ SectorLoop:
 	jc DiskError
 
 DiskSuccess:
-	mov $0x0E, %ah
-	mov $'.', %al
-	int $0x10
-
 	incl sector
 	incb chsSector
 
@@ -110,7 +106,6 @@ SectorSameSegment:
 	mov $runningMsg, %si
 	call Print
 
-/*
 	// Enable A20 line
 	cli
 
@@ -131,7 +126,10 @@ SectorSameSegment:
 	pop %ax
 	or $0x2, %ax
 	outb $0x60
-*/
+	
+	mov $0x0E, %ah
+	mov $'.', %al
+	int $0x10
 
 	// Enable PE flag
 	mov %cr0, %eax
@@ -228,7 +226,7 @@ welcomeMsg:
 diskErrorMsg:
 	.string "Disk Error!\r\n"
 runningMsg:
-	.string "Running ->"
+	.string "\r\nRunning ->"
 
 
 chsSector:
