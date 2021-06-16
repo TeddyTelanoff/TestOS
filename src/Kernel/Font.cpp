@@ -138,7 +138,7 @@ namespace
 
 void Font::DrawChar(char c, uint x, uint y, byte col)
 {
-	const byte *glyph = FONT[c];
+	const byte *glyph = FONT[(uint)c];
 	for (uint py = 0; py < 8; py++)
 		for (uint px = 0; px < 8; px++)
 			if (glyph[py] & (1 << px))

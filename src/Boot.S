@@ -66,7 +66,9 @@ SectorLoop:
 	jc DiskError
 
 DiskSuccess:
-	call PrintDot
+	mov $0x0E, %ah
+	mov $'.', %al
+	int $0x10
 
 	incl sector
 	incb chsSector
@@ -99,6 +101,9 @@ SectorSameHeadCylinder:
 SectorSameSegment:
 	pop %cx
 	loop SectorLoop
+
+	mov $runningMsg, %si
+	call Print
 
 	// Video mode: 320x200 @16 cols
 	xor %ah, %ah
@@ -149,9 +154,6 @@ Entry32:
 	// Jump to kernel loaded at 0x10000
 	mov $0x10000, %eax
 	jmp *%eax
-
-Loop:
-	jmp Loop
 
 .code16
 EnableA20Wait0:
@@ -204,16 +206,6 @@ _A:
 	add $55, %al
 _B:
 	ret
-
-PrintChar:
-	ret
-
-PrintDot:
-	mov $0x0E, %ah
-	mov $'.', %al
-	int $0x10
-	ret
-
 Print:
 	xor %bh, %bh
 	mov $0x0E, %ah
@@ -233,6 +225,8 @@ welcomeMsg:
 	.string "Good Morning Ninjago!\r\n"
 diskErrorMsg:
 	.string "Disk Error!\r\n"
+runningMsg:
+	.string "Running ->"
 
 
 chsSector:
