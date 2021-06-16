@@ -10,16 +10,15 @@ Boot:
 	mov %cs, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	mov %ax, %fs
-	mov %ax, %gs
-	mov %ax, %ss
 
 	// Move stack ptr to free mem area
-	mov $0x3000, %sp
+	cli
+    movw %ax, %ss
+    movw $0x7c00, %sp
+    sti
 
 	// Save drive num to read kernel later
 	mov %dl, driveNum
-	sti
 
 	// Print welcome msg
 	mov $welcomeMsg, %si
@@ -38,7 +37,7 @@ Boot:
 	// Kernel bin is right after first sector
 	// Num sectors to read in %cx
 
-	mov $0x40, %cx
+	mov $0x25, %cx
 	movw $0x1000, segment
 	movw $0, offset
 	movw $1, sector
@@ -67,7 +66,9 @@ SectorLoop:
 	jc DiskError
 
 DiskSuccess:
-	incb sector
+	call PrintDot
+
+	incl sector
 	incb chsSector
 
 	mov sectorsPerTrack, %al
@@ -77,6 +78,7 @@ DiskSuccess:
 	// Sectors per track exceeded, reset sector to 1, increase heads and check for head limit
 	movb $1, chsSector
 	incb chsHead
+
 	mov numHeads, %al
 	cmp %al, chsHead
 	jna SectorSameHeadCylinder
@@ -99,7 +101,7 @@ SectorSameSegment:
 	loop SectorLoop
 
 	// Video mode: 320x200 @16 cols
-	mov $0, %ah
+	xor %ah, %ah
 	mov $0x13, %al
 	int $0x10
 
@@ -167,7 +169,50 @@ EnableA20Wait1:
 	ret
 
 DiskError:
+	mov %ah, %al
+	call PrintHex
+
 	mov $diskErrorMsg, %si
+	call Print
+llllllloop:
+	jmp llllllloop
+
+PrintHex:
+	mov $0x0E, %ah
+
+	mov %al, %bh
+	and $0x0F, %bh
+
+	and $0xF0, %bh
+	shr $4, %al
+	mov $0x09, %bl
+
+	call AddHexACII
+	int $0x10
+
+	mov %bh, %al
+	call AddHexACII
+	int $0x10
+	ret
+
+AddHexACII:
+	cmp %bl, %al
+	ja _A
+	add $48, %al
+	jmp _B
+_A:
+	add $55, %al
+_B:
+	ret
+
+PrintChar:
+	ret
+
+PrintDot:
+	mov $0x0E, %ah
+	mov $'.', %al
+	int $0x10
+	ret
 
 Print:
 	xor %bh, %bh
@@ -199,8 +244,6 @@ chsHead:
 
 driveNum:
 	.byte 0
-marker:
-	.byte 0xDE, 0xAD, 0xBE, 0xEF
 numHeads:
 	.byte 0
 sectorsPerTrack:
