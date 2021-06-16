@@ -106,12 +106,13 @@ SectorSameSegment:
 	xor %ah, %ah
 	mov $0x13, %al
 	int $0x10
-
-	// Enable A20 line
-	cli
 	
 	mov $runningMsg, %si
 	call Print
+
+/*
+	// Enable A20 line
+	cli
 
 	// Read and save state
 	call EnableA20Wait0
@@ -130,6 +131,7 @@ SectorSameSegment:
 	pop %ax
 	or $0x2, %ax
 	outb $0x60
+*/
 
 	// Enable PE flag
 	mov %cr0, %eax
