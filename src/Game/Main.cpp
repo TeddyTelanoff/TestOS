@@ -285,7 +285,6 @@ void KeyPress(KeyCode keyCode, word mods)
 		break;
 	case Key::R:
 	{
-		System::Shutdown();
 		if (mods & (Key::Mod::Ctrl | Key::Mod::Alt))
 			Restart();
 
