@@ -21,7 +21,7 @@ void Sound::Stop()
 
 void Sound::Beep()
 {
-	Play(1000);
+	Play(2000);
 	wait = Time::GetTime() + Time::Tps;
 }
 
