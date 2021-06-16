@@ -30,6 +30,8 @@ namespace Key
 		RightArrow = 0x4D,
 		DownArrow = 0x50,
 
+		Enter = 0x1C,
+
 		Ctrl = 0x1D,
 		Alt = 0x38,
 		LeftShift = 0x2A,

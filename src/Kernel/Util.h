@@ -79,6 +79,10 @@ namespace
 		for (uint i = count; i; i--)
 			to[i - 1] = from[i - 1];
 	}
+	
+	template<uint len>
+	inline uint StrLen(char (&str)[len])
+	{ return len - 1; }
 
 	inline uint StrLen(const char *str)
 	{

@@ -108,6 +108,7 @@ struct Block
 #define NUM_BLOCKS 64
 bool started;
 Block *current;
+static char keyCodeStr[3]; 
 Block blocks[NUM_BLOCKS] = {};
 Block::Type board[Board::Height][Board::Width];
 
@@ -210,7 +211,7 @@ void Main()
 	while (!started)
 	{
 		Screen::Clear(0x13);
-		const char msg[] = "Press any key to start...";
+		const char msg[] = "Press 'enter' to start...";
 		Font::DrawStr(msg, Screen::Width / 2 - (sizeof(msg) - 1) * 4, Screen::Height / 2 + 15);
 		Screen::SwapBuffers();
 	}
@@ -257,14 +258,23 @@ void Main()
 		Screen::Clear(0x13);
 		Draw();
 		if (current)
+		{
 			current->Draw();
+
+			static char buff[2];
+			Font::FNum(current->type, buff);	
+			Font::DrawStr(buff, 5, 20);
+		}
+		Font::DrawStr(keyCodeStr, 5, 5);
 		Screen::SwapBuffers();
 	}
 }
 
 void KeyPress(KeyCode keyCode, word mods)
 {
-	if (!started)
+	Font::FNum<0x10>(keyCode, keyCodeStr);
+
+	if (!started && keyCode == Key::Enter)
 	{
 		started = true;
 		System::randSeed = Time::GetTime();
