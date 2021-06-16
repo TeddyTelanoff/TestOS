@@ -277,6 +277,7 @@ void KeyPress(KeyCode keyCode, word mods)
 	if (!started && keyCode == Key::Enter)
 	{
 		started = true;
+		Sound::Beep();
 		System::randSeed = Time::GetTime();
 
 		static char buff[16];
@@ -290,7 +291,7 @@ void KeyPress(KeyCode keyCode, word mods)
 	switch (keyCode)
 	{
 	case Key::D:
-		Sound::Play(1000);
+		Sound::Beep();
 		break;
 
 	case Key::LeftArrow:
