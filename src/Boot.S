@@ -102,9 +102,6 @@ SectorSameSegment:
 	pop %cx
 	loop SectorLoop
 
-	mov $runningMsg, %si
-	call Print
-
 	// Video mode: 320x200 @16 cols
 	xor %ah, %ah
 	mov $0x13, %al
@@ -112,6 +109,9 @@ SectorSameSegment:
 
 	// Enable A20 line
 	cli
+	
+	mov $runningMsg, %si
+	call Print
 
 	// Read and save state
 	call EnableA20Wait0
