@@ -282,8 +282,6 @@ void KeyPress(KeyCode keyCode, word mods)
 	case Key::DownArrow:
 		if (current->DoesFit(current->x, current->y + 1, current->rot))
 			current->y++;
-		else
-			current->Place();
 		break;
 	case Key::R:
 	{
