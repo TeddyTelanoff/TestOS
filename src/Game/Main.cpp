@@ -4,6 +4,7 @@
 #include "Kernel/Keyboard.h"
 #include "Kernel/Font.h"
 #include "Kernel/Screen.h"
+#include "Kernel/Sound.h"
 
 namespace Board
 {
@@ -214,9 +215,16 @@ void Main()
 		Screen::SwapBuffers();
 	}
 
+	ulong musikUpdate = 0;
 	while (true)
 	{
 		ulong now = Time::GetTime();
+		if (musikUpdate != now)
+		{
+			musikUpdate = now;
+			Sound::Tick();
+		}
+
 		if (now - pFrame > Time::Tps)
 		{
 			pFrame = now;
@@ -271,6 +279,10 @@ void KeyPress(KeyCode keyCode, word mods)
 
 	switch (keyCode)
 	{
+	case Key::D:
+		Sound::Play(1000);
+		break;
+
 	case Key::LeftArrow:
 		if (current->DoesFit(current->x - 1, current->y, current->rot))
 			current->x--;
