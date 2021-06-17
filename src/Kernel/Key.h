@@ -20,6 +20,7 @@ namespace Key
 
 		A = 0x1E,
 		W = 0x11,
+		E = 0x12,
 		D = 0x20,
 		S = 0x1F,
 

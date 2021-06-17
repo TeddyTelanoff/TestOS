@@ -110,9 +110,10 @@ struct Block
 
 #define NUM_BLOCKS 64
 bool started;
-Block *current;
+bool medusa;
+Block current;
 static char keyCodeStr[3]; 
-Block blocks[NUM_BLOCKS] = {};
+byte toDestroy[Board::Height];
 Block::Type board[Board::Height][Board::Width];
 
 static uint startX = Screen::Width / 2 - Board::Width * Board::Scale / 2, endX = Screen::Width / 2 + Board::Width * Board::Scale / 2;
@@ -142,8 +143,7 @@ bool Block::DoesFit(int x, int y, int rot) const
 
 void Block::Place()
 {
-	current->alive = false;
-	current = null;
+	current.alive = false;
 
 	for (int ty = 0; ty < Size; ty++)
 		for (int tx = 0; tx < Size; tx++)
@@ -152,20 +152,24 @@ void Block::Place()
 
 	for (uint y = 0; y < Board::Height; y++)
 	{
-		bool line = true;
+		bool rmedusa = true;
+		toDestroy[y] = true;
 		for (uint x = 0; x < Board::Width; x++)
-			if (board[y][x] == Block::None || board[y][x] == Block::Stone)
+			if (board[y][x] != Block::Stone)
 			{
-				line = false;
-				break;
+				rmedusa = false;
+				if (board[y][x] == Block::None)
+				{
+					/* rmedusa = */ toDestroy[y] = false;
+					break;
+				}
 			}
 
-		if (!line)
-			continue;
-
-		if (y != 0)
-			Move((byte *)board[0], (byte *)board[1], sizeof(board[0]) * y);
-		Set((Block::Type *)board, Block::None, Board::Width);
+		if (rmedusa)
+		{
+			medusa = true;
+			return;
+		}
 	}
 
 	
@@ -214,13 +218,47 @@ void Draw()
 			}
 
 			if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
-				Screen::SetPixel(px, py, Block::Colors[type][1]);
+				Screen::SetPixel(px, py, Block::Colors[type][!(medusa || toDestroy[ty])]);
 			else
-				Screen::SetPixel(px, py, Block::Colors[type][0]);
+				Screen::SetPixel(px, py, Block::Colors[type][medusa || toDestroy[ty]]);
 		}
 }
 
 void Restart();
+
+void DestroyToDestroy()
+{
+	// If you do a Medusa, you deserve it
+	if (medusa)
+	{
+		Set((Block::Type *)board, Block::None, Board::Size);
+		medusa = false;
+		return;
+	}
+
+	for (uint y = 0; y < Board::Height; y++)
+	{
+		if (!toDestroy[y])
+			continue;
+
+		// To prevent, ya know...stuff
+		toDestroy[y] = false;
+
+		if (y != 0)
+		{
+			for (uint dy = y; dy; dy--)
+			{
+				for (uint x = 0; x < Board::Width; x++)
+					if (board[dy - 1][x] != Block::Stone && board[dy][x] != Block::Stone)
+						board[dy][x] = board[dy - 1][x];
+			}
+		}
+		else
+			for (uint x = 0; x < Board::Width; x++)
+				if (board[y][x] != Block::Stone)
+					board[y][x] = Block::None;
+	}
+}
 
 void Main()
 {
@@ -248,40 +286,35 @@ void Main()
 		if (now - pFrame > Time::Tps)
 		{
 			pFrame = now;
-			if (current)
+
+			DestroyToDestroy();
+
+			if (current.alive)
 			{
-				if (current->DoesFit(current->x, current->y + 1, current->rot))
-					current->y++;
+				if (current.DoesFit(current.x, current.y + 1, current.rot))
+					current.y++;
 				else
-					current->Place();
+					current.Place();
 			}
 			else
 			{
-				// TODO: Optimize
-				for (uint i = 0; i < NUM_BLOCKS; i++)
-					if (!blocks[i].alive)
-					{
-						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::TrueCount), };
-						current = &blocks[i];
-
-						if (!current->DoesFit(current->x, current->y, current->rot))
-						{
-							System::Log("You Lost :(", Time::Tps * 2);
-							Restart();
-						}
-						break;
-					}
+				current = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::TrueCount), };
+				if (!current.DoesFit(current.x, current.y, current.rot))
+				{
+					System::Log("You Lost :(", Time::Tps * 2);
+					Restart();
+				}
 			}
 		}
 
 		Screen::Clear(0x13);
 		Draw();
-		if (current)
+		if (current.alive)
 		{
-			current->Draw();
+			current.Draw();
 
 			static char buff[2];
-			Font::FNum(current->type, buff);	
+			Font::FNum(current.type, buff);	
 			Font::DrawStr(buff, 5, 20);
 		}
 		Font::DrawStr(keyCodeStr, 5, 5);
@@ -305,33 +338,38 @@ void KeyPress(KeyCode keyCode, word mods)
 		return;
 	}
 
-	if (current == null)
+	if (!current.alive)
 		return;
 
 	switch (keyCode)
 	{
-	case Key::D:
+	case Key::E:
 		Sound::Beep();
 		break;
 
+	case Key::A:
 	case Key::LeftArrow:
-		if (current->DoesFit(current->x - 1, current->y, current->rot))
-			current->x--;
+		if (current.DoesFit(current.x - 1, current.y, current.rot))
+			current.x--;
 		break;
+	case Key::D:
 	case Key::RightArrow:
-		if (current->DoesFit(current->x + 1, current->y, current->rot))
-			current->x++;
+		if (current.DoesFit(current.x + 1, current.y, current.rot))
+			current.x++;
 		break;
+	case Key::S:
 	case Key::DownArrow:
-		if (current->DoesFit(current->x, current->y + 1, current->rot))
-			current->y++;
+		if (current.DoesFit(current.x, current.y + 1, current.rot))
+			current.y++;
 		break;
+	case Key::W:
+	case Key::UpArrow:
 	case Key::R:
 	{
 		if (mods & (Key::Mod::Ctrl | Key::Mod::Alt))
 			Restart();
 
-		int tryRot = current->rot;
+		int tryRot = current.rot;
 		if (mods & Key::Mod::Shift)
 		{
 			tryRot--;
@@ -341,8 +379,8 @@ void KeyPress(KeyCode keyCode, word mods)
 		else
 			tryRot = (tryRot + 1) % 4;
 
-		if (current->DoesFit(current->x, current->y, tryRot))
-			current->rot = tryRot;
+		if (current.DoesFit(current.x, current.y, tryRot))
+			current.rot = tryRot;
 		break;
 	}
 	}}
@@ -352,7 +390,6 @@ void KeyRelease(KeyCode keyCode, word mods)
 
 void Restart()
 {
-	current = null;
-	Set(blocks, 0, NUM_BLOCKS);
+	current.alive = false;
 	Set((Block::Type *)board, Block::None, Board::Size);
 }

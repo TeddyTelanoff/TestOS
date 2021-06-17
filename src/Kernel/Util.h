@@ -47,14 +47,12 @@ namespace
 	inline void OutPortB(word port, byte dat)
 	{ asm("outb %1, %0" : : "dN" (port), "a" (dat)); }
 
-	template<typename T>
-	inline void Set(T *obj, byte val, uint count)
+
+	template<typename T, typename V>
+	inline void Set(T *obj, V val, uint count)
 	{
-		count *= sizeof(T);
-		byte *ptr = (byte *)obj;
-		
 		while (count--)
-			*ptr++ = val;
+			*obj++ = val;
 	}
 
 	template<typename T>

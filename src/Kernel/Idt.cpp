@@ -28,7 +28,7 @@ void Idt::Init()
 {
 	ptr.limit = sizeof(entries) - 1;
 	ptr.base = entries;
-	Set(entries, 0, 256);
+	::Set((byte *)entries, 0, sizeof(Entry) * 256);
 	IdtLoad(ptr);
 }
 
