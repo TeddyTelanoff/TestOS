@@ -3,8 +3,9 @@
 namespace
 {
 	byte *buffer = (byte *)0xA0000;
-	byte pixels[Screen::Size] = {};
 }
+
+byte Screen::pixels[Screen::Size] = {};
 
 void Screen::Clear(byte col)
 { Set(pixels, col, Size); }

@@ -42,7 +42,7 @@ struct Block
 
 	static const constexpr byte Colors[Types::Count][2] = {
 		0x4F, 0x37,
-		0x09, 0x01,
+		0x09, 0x20,
 		0x2A, 0x06,
 		0x0E, 0x74,
 		0x2F, 0x02,
@@ -108,6 +108,7 @@ struct Block
 #define NUM_BLOCKS 64
 bool started;
 Block *current;
+word pxOffset = 0;
 static char keyCodeStr[3]; 
 Block blocks[NUM_BLOCKS] = {};
 Block::Type board[Board::Height][Board::Width];
@@ -139,6 +140,7 @@ bool Block::DoesFit(int x, int y, int rot) const
 
 void Block::Place()
 {
+	current->alive = false;
 	current = null;
 
 	for (int ty = 0; ty < Size; ty++)
@@ -173,9 +175,9 @@ void Block::Draw() const
 			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 			{
 				if (((px + 1) % Scale <= 1) || ((py + 1) % Scale <= 1))
-					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][1]);
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[(type + pxOffset) % Block::Count][1]);
 				else
-					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][0]);
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[(type + pxOffset) % Block::Count][0]);
 			}
 		}
 }
@@ -195,9 +197,9 @@ void Draw()
 			}
 
 			if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
-				Screen::SetPixel(px, py, Block::Colors[type][1]);
+				Screen::SetPixel(px, py, Block::Colors[(type + pxOffset) % Block::Count][1]);
 			else
-				Screen::SetPixel(px, py, Block::Colors[type][0]);
+				Screen::SetPixel(px, py, Block::Colors[(type + pxOffset) % Block::Count][0]);
 		}
 }
 
@@ -228,6 +230,7 @@ void Main()
 
 		if (now - pFrame > Time::Tps)
 		{
+			pxOffset++;
 			pFrame = now;
 			if (current)
 			{
@@ -266,6 +269,7 @@ void Main()
 			Font::DrawStr(buff, 5, 20);
 		}
 		Font::DrawStr(keyCodeStr, 5, 5);
+		// PostProcessing();
 		Screen::SwapBuffers();
 	}
 }
