@@ -1,4 +1,3 @@
-#include "Kernel/Screen.h"
 #include "Kernel/System.h"
 #include "Kernel/Time.h"
 #include "Kernel/Keyboard.h"
