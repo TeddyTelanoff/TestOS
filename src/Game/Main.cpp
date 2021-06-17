@@ -35,8 +35,10 @@ struct Block
 		S,
 		T,
 		Z,
+		Stone,
 
-		Count,
+		TrueCount = Z + 1,
+		Count = Stone + 1,
 		None,
 	};
 
@@ -48,9 +50,10 @@ struct Block
 		0x2F, 0x02,
 		0x0D, 0x05,
 		0x28, 0x04,
+		0x19, 0x07,
 	};
 
-	static const constexpr word Tetriminos[7][4] = {
+	static const constexpr word Tetriminos[Types::TrueCount][4] = {
 		{
 			0b0000111100000000,
 			0b0010001000100010,
@@ -151,7 +154,7 @@ void Block::Place()
 	{
 		bool line = true;
 		for (uint x = 0; x < Board::Width; x++)
-			if (board[y][x] == Block::None)
+			if (board[y][x] == Block::None || board[y][x] == Block::Stone)
 			{
 				line = false;
 				break;
@@ -163,6 +166,21 @@ void Block::Place()
 		if (y != 0)
 			Move((byte *)board[0], (byte *)board[1], sizeof(board[0]) * y);
 		Set((Block::Type *)board, Block::None, Board::Width);
+	}
+
+	
+	for (uint x = 0; x < Board::Width; x++)
+	{
+		bool inTheDark = false;
+		for (uint y = 0; y < Board::Height; y++)
+		{
+			if (board[y][x] != Block::None)
+			{
+				if (y > 0 && inTheDark && board[y - 1][x] == Block::None)
+					board[y][x] = Block::Stone;
+				inTheDark = true;
+			}
+		}
 	}
 }
 void Block::Draw() const
@@ -196,9 +214,9 @@ void Draw()
 			}
 
 			if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
-				Screen::SetPixel(px, py, 0x07);
+				Screen::SetPixel(px, py, Block::Colors[type][1]);
 			else
-				Screen::SetPixel(px, py, 0x19);
+				Screen::SetPixel(px, py, Block::Colors[type][0]);
 		}
 }
 
@@ -243,7 +261,7 @@ void Main()
 				for (uint i = 0; i < NUM_BLOCKS; i++)
 					if (!blocks[i].alive)
 					{
-						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::Count), };
+						blocks[i] = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::TrueCount), };
 						current = &blocks[i];
 
 						if (!current->DoesFit(current->x, current->y, current->rot))
