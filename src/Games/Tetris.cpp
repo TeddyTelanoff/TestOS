@@ -111,8 +111,9 @@ struct Block
 #define NUM_BLOCKS 64
 bool started;
 bool medusa;
+uint score;
 Block current;
-static char keyCodeStr[3]; 
+static char keyCodeStr[3], scoreStr[16]; 
 byte toDestroy[Board::Height];
 Block::Type board[Board::Height][Board::Width];
 
@@ -141,6 +142,9 @@ bool Block::DoesFit(int x, int y, int rot) const
 	return true;
 }
 
+void MedusaTwo()
+{ Sound::Beep(350, Time::Tps / 2); }
+
 void Block::Place()
 {
 	current.alive = false;
@@ -160,16 +164,21 @@ void Block::Place()
 				rmedusa = false;
 				if (board[y][x] == Block::None)
 				{
-					/* rmedusa = */ toDestroy[y] = false;
+					toDestroy[y] = false;
 					break;
 				}
 			}
 
-		if (rmedusa)
+		if (rmedusa = toDestroy[y])
 		{
 			medusa = true;
+			Sound::Beep(370, Time::Tps / 2);
+			Time::Schedule(MedusaTwo, Time::Tps / 2);
 			return;
 		}
+
+		if (toDestroy[y])
+			Sound::Beep(87);
 	}
 
 	
@@ -228,12 +237,15 @@ void Restart();
 
 void DestroyToDestroy()
 {
+	bool destroyed = false;
+
 	// If you do a Medusa, you deserve it
 	if (medusa)
 	{
+		destroyed = true;
 		Set((Block::Type *)board, Block::None, Board::Size);
 		medusa = false;
-		return;
+		score += 1337;
 	}
 
 	for (uint y = 0; y < Board::Height; y++)
@@ -241,8 +253,11 @@ void DestroyToDestroy()
 		if (!toDestroy[y])
 			continue;
 
+		destroyed = true;
+
 		// To prevent, ya know...stuff
 		toDestroy[y] = false;
+		score += 100;
 
 		if (y != 0)
 		{
@@ -258,13 +273,53 @@ void DestroyToDestroy()
 				if (board[y][x] != Block::Stone)
 					board[y][x] = Block::None;
 	}
+
+	if (destroyed)
+	{
+		Font::FNum(score, scoreStr);
+		Sound::Beep(44, Time::Tps / 2);
+	}
+}
+
+void Update()
+{
+	DestroyToDestroy();
+
+	if (current.alive)
+	{
+		if (current.DoesFit(current.x, current.y + 1, current.rot))
+			current.y++;
+		else
+			current.Place();
+	}
+	else
+	{
+		current = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::TrueCount), };
+		if (!current.DoesFit(current.x, current.y, current.rot))
+		{
+			System::Log("You Lost :(", Time::Tps * 2);
+			Restart();
+		}
+	}
+
+	Time::Schedule(Update, Time::Tps);
+}
+
+void Shake()
+{
+	for (int i = 0; i < Screen::Size; i++)
+	{
+		int j = (i + System::Random<int>(2) - 1) % Screen::Size;
+		if (j < 0)
+			j = Screen::Size - 1;
+		Screen::pixels[i] = Screen::pixels[j];
+	}
 }
 
 void Main()
 {
 	Set((Block::Type *)board, Block::None, Board::Size);
 
-	ulong pFrame = 0;
 	while (!started)
 	{
 		Screen::Clear(0x13);
@@ -272,41 +327,10 @@ void Main()
 		Font::DrawStr(msg, Screen::Width / 2 - (sizeof(msg) - 1) * 4, Screen::Height / 2 + 15);
 		Screen::SwapBuffers();
 	}
-
-	ulong musikUpdate = 0;
+	
+	Time::Schedule(Update, Time::Tps);	
 	while (true)
 	{
-		ulong now = Time::GetTime();
-		if (musikUpdate != now)
-		{
-			musikUpdate = now;
-			Sound::Tick();
-		}
-
-		if (now - pFrame > Time::Tps)
-		{
-			pFrame = now;
-
-			DestroyToDestroy();
-
-			if (current.alive)
-			{
-				if (current.DoesFit(current.x, current.y + 1, current.rot))
-					current.y++;
-				else
-					current.Place();
-			}
-			else
-			{
-				current = { true, Board::Width / 2 - 2, -4, System::Random(4), System::Random(Block::TrueCount), };
-				if (!current.DoesFit(current.x, current.y, current.rot))
-				{
-					System::Log("You Lost :(", Time::Tps * 2);
-					Restart();
-				}
-			}
-		}
-
 		Screen::Clear(0x13);
 		Draw();
 		if (current.alive)
@@ -314,10 +338,13 @@ void Main()
 			current.Draw();
 
 			static char buff[2];
-			Font::FNum(current.type, buff);	
-			Font::DrawStr(buff, 5, 20);
+			Font::FNum(current.type, buff);
+			Font::DrawStr(buff, 5, Screen::Height - 28);
 		}
-		Font::DrawStr(keyCodeStr, 5, 5);
+		Font::DrawStr(keyCodeStr, 5, Screen::Height - 13);
+		Font::DrawStrDoubled("Score:", 5, 5);
+		Font::DrawStrW(scoreStr, 5, 20, startX - 5);
+		Shake();
 		// PostProcessing();
 		Screen::SwapBuffers();
 	}
@@ -330,11 +357,10 @@ void KeyPress(KeyCode keyCode, word mods)
 	if (!started && keyCode == Key::Enter)
 	{
 		started = true;
-		Sound::Beep();
 		System::randSeed = Time::GetTime();
 
 		static char buff[16];
-		Font::FNum(System::randSeed, buff);
+		Font::FNum(System::randSeed, buff, true);
 		return;
 	}
 
@@ -343,8 +369,8 @@ void KeyPress(KeyCode keyCode, word mods)
 
 	switch (keyCode)
 	{
-	case Key::E:
-		Sound::Beep();
+	case Key::M:
+		Sound::ToggleMute();
 		break;
 
 	case Key::A:

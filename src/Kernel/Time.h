@@ -9,6 +9,9 @@ namespace Time
 		Tps = 420,
 	};
 
+	using Event = void (*)();
+
 	extern void Init();
 	extern ulong GetTime();
+	extern void Schedule(Event, uint delay);
 }

@@ -1,32 +1,60 @@
 #include "Sound.h"
-#include "Time.h"
 
 namespace
 {
 	uint wait;
+	bool playing, mute;
 }
 
-void Sound::Play(uint freq)
+void Sound::Play(word freq)
 {
-	uint div = 1193180 / freq;
+	if (mute)
+		return;
+
+	word div = 1193180 / freq;
 	OutPortB(0x43, 0xB6);
 	OutPortB(0x42, div & 0xFF);
 	OutPortB(0x42, div >> 8);
 
-	OutPortB(0x61, InPortB(0x61) | 3);
+	if (!playing)
+	{
+		OutPortB(0x61, InPortB(0x61) | 3);
+		playing = true;
+	}
+}
+
+void Sound::PlayRaw(word note)
+{
+	if (mute)
+		return;
+		
+	OutPortB(0x43, 0xB6);
+	OutPortB(0x42, note & 0xFF);
+	OutPortB(0x42, note >> 8);
+
+
+	if (!playing)
+	{
+		OutPortB(0x61, InPortB(0x61) | 3);
+		playing = true;
+	}
 }
 
 void Sound::Stop()
-{ OutPortB(0x61, InPortB(0x61) & 0xFC); }
-
-void Sound::Beep()
 {
-	Play(554);
-	wait = Time::GetTime() + Time::Tps;
+	playing = false;
+	OutPortB(0x61, InPortB(0x61) & 0xFC);
 }
 
-void Sound::Tick()
+void Sound::Beep(word freq, uint duration)
 {
-	if (Time::GetTime() >= wait)
-		Stop();
+	Play(freq);
+	Time::Schedule(Stop, duration);
 }
+
+
+void Sound::ToggleMute()
+{ mute = !mute; }
+
+void Sound::SetMute(bool mute)
+{ ::mute = mute; }

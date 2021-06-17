@@ -25,6 +25,7 @@ namespace Key
 		S = 0x1F,
 
 		R = 0x13,
+		M = 0x32,
 
 		LeftArrow = 0x4B,
 		UpArrow = 0x48,

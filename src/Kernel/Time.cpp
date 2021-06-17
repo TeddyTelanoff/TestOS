@@ -1,9 +1,15 @@
 #include "Time.h"
 #include "Irq.h"
+#include "System.h"
 
 namespace
 {
 	ulong freq, div, ticks;
+	struct
+	{
+		Time::Event event;
+		ulong when;
+	} events[16] = {};
 
 	namespace PIT
 	{
@@ -31,7 +37,15 @@ namespace
 	}
 
 	void Handler(Isr::Registers &regs)
-	{ ticks++; }
+	{
+		ticks++;
+		for (auto &e : events)
+			if (e.when && ticks >= e.when)
+			{
+				e.event();
+				e.when = 0;
+			}
+	}
 }
 
 void Time::Init()
@@ -46,3 +60,16 @@ void Time::Init()
 
 ulong Time::GetTime()
 { return ticks; }
+
+void Time::Schedule(Event ev, uint delay)
+{
+	for (auto &e : events)
+		if (e.when == 0)
+		{
+			e.event = ev;
+			e.when = ticks + delay;
+			return;
+		}
+
+	System::Panic("Ran out of empty events!");
+}

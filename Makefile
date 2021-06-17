@@ -23,9 +23,17 @@ BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
-KERNEL_CPP_SRCS=$(wildcard src/Kernel/*.cpp) $(wildcard src/Game/*.cpp)
+ifeq ($(GAME),Tetris)
+GAME_SRCS=src/Games/Tetris.cpp
+else ifeq ($(GAME),GTN)
+GAME_SRCS=src/Games/GuessTheNumber.cpp
+else
+$(error Must choose a game to boot)
+endif
+
+KERNEL_CPP_SRCS=$(wildcard src/Kernel/*.cpp)
 KERNEL_S_SRCS=$(wildcard src/Kernel/*.S)
-KERNEL_OBJS=$(KERNEL_CPP_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o)
+KERNEL_OBJS=$(KERNEL_CPP_SRCS:.cpp=.o) $(KERNEL_S_SRCS:.S=.o) $(GAME_SRCS:.cpp=.o)
 
 BOOTSECT=Boot.bin
 KERNEL=Kernel.bin

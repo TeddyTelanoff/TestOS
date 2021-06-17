@@ -161,3 +161,32 @@ void Font::DrawStr(const char *str, uint x, uint y, byte col)
 		}
 	}
 }
+
+void Font::DrawStrDoubled(const char *str, uint x, uint y, byte col1, byte col2)
+{
+	DrawStr(str, x + 1, y + 1, col2);
+	DrawStr(str, x, y, col1);
+}
+
+void Font::DrawStrW(const char *str, uint x, uint y, uint w, byte col)
+{
+	uint startX = x;
+
+	char c;
+	while ((c = *str++))
+	{
+		DrawChar(c, x, y, col);
+		x += 8;
+		if (x + 8 >= Screen::Width || x - startX + 8 >= w)
+		{
+			y += 8;
+			x = startX;
+		}
+	}
+}
+
+void Font::DrawStrDoubledW(const char *str, uint x, uint y, uint w, byte col1, byte col2)
+{
+	DrawStrW(str, x + 1, y + 1, w, col2);
+	DrawStrW(str, x, y, w, col1);
+}
