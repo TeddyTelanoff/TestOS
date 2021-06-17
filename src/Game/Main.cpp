@@ -108,7 +108,6 @@ struct Block
 #define NUM_BLOCKS 64
 bool started;
 Block *current;
-word pxOffset = 0;
 static char keyCodeStr[3]; 
 Block blocks[NUM_BLOCKS] = {};
 Block::Type board[Board::Height][Board::Width];
@@ -175,9 +174,9 @@ void Block::Draw() const
 			if (BitAt(Tetriminos[type][rot], tx + ty * Size))
 			{
 				if (((px + 1) % Scale <= 1) || ((py + 1) % Scale <= 1))
-					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[(type + pxOffset) % Block::Count][1]);
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][1]);
 				else
-					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[(type + pxOffset) % Block::Count][0]);
+					Screen::SetPixel(x * Scale + px + startX, y * Scale + py + startY, Colors[type][0]);
 			}
 		}
 }
@@ -197,9 +196,9 @@ void Draw()
 			}
 
 			if (((px + 1) % Block::Scale <= 1) || ((py + 1) % Block::Scale <= 1))
-				Screen::SetPixel(px, py, Block::Colors[(type + pxOffset) % Block::Count][1]);
+				Screen::SetPixel(px, py, 0x07);
 			else
-				Screen::SetPixel(px, py, Block::Colors[(type + pxOffset) % Block::Count][0]);
+				Screen::SetPixel(px, py, 0x19);
 		}
 }
 
@@ -230,7 +229,6 @@ void Main()
 
 		if (now - pFrame > Time::Tps)
 		{
-			pxOffset++;
 			pFrame = now;
 			if (current)
 			{
