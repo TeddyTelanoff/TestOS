@@ -8,13 +8,20 @@ namespace Font
 	template<uint base = 10, uint len>
 	inline void FNum(uint num, char (&buff)[len], bool fillAll = false)
 	{
-		uint digit;
-		for (uint i = len - 1; i; i--)
+		uint digit, i;
+		for (i = 0; i < len; i++)
 		{
 			digit = num % base;
-			buff[i - 1] = digit < 10 ? digit + '0' : digit - 10 + 'A';
-			if (!(num /= base))
+			buff[i] = digit < 10 ? digit + '0' : digit - 10 + 'A';
+			if ((num /= base) == 0 && fillAll == false)
 				break;
+		}
+
+		for (uint j = 0; j < i; j++, i--)
+		{
+			digit = buff[j];
+			buff[j] = buff[i];
+			buff[i] = digit;
 		}
 
 		buff[len - 1] = null;

@@ -168,11 +168,11 @@ void Block::Place()
 				}
 			}
 
-		if (rmedusa = toDestroy[y])
+		if (rmedusa)
 		{
-			medusa = true;
 			Sound::Beep(370, Time::Tps / 2);
 			Time::Schedule(MedusaTwo, Time::Tps / 2);
+			medusa = true;
 			return;
 		}
 
@@ -317,7 +317,7 @@ void Shake()
 
 void Main()
 {
-	Set((Block::Type *)board, Block::None, Board::Size);
+	Restart();
 
 	while (!started)
 	{
@@ -343,7 +343,7 @@ void Main()
 		Font::DrawStr(keyCodeStr, 5, Screen::Height - 13);
 		Font::DrawStrDoubled("Score:", 5, 5);
 		Font::DrawStrW(scoreStr, 5, 20, startX - 5);
-		Shake();
+		// Shake();
 		// PostProcessing();
 		Screen::SwapBuffers();
 	}
@@ -415,6 +415,9 @@ void KeyRelease(KeyCode keyCode, word mods)
 
 void Restart()
 {
+	score = 0;
+	scoreStr[0] = '0';
+	scoreStr[1] =  0 ;
 	current.alive = false;
 	Set((Block::Type *)board, Block::None, Board::Size);
 }

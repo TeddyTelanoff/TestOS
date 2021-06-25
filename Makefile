@@ -23,9 +23,9 @@ BOOTSECT_SRCS=src/Boot.S
 
 BOOTSECT_OBJS=$(BOOTSECT_SRCS:.S=.o)
 
-ifeq ($(GAME),Tetris)
+ifeq ($(game),tetris)
 GAME_SRCS=src/Games/Tetris.cpp
-else ifeq ($(GAME),GTN)
+else ifeq ($(game),gtn)
 GAME_SRCS=src/Games/GuessTheNumber.cpp
 else
 $(error Must choose a game to boot)
