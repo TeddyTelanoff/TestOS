@@ -27,6 +27,8 @@ ifeq ($(game),tetris)
 GAME_SRCS=src/Games/Tetris.cpp
 else ifeq ($(game),gtn)
 GAME_SRCS=src/Games/GuessTheNumber.cpp
+else ifeq ($(game),50subz)
+GAME_SRCS=src/Games/50subz.cpp
 else
 $(error Must choose a game to boot)
 endif
