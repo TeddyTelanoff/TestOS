@@ -92,5 +92,5 @@ void Irq::Install(uint i, Isr::Stub handler)
 	CLI();
 	handlers[i] = handler;
 	ClearMask(i);
-	STI(); // <-- This is giving me problemos
+	STI();
 }

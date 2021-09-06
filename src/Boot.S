@@ -98,6 +98,11 @@ SectorSameSegment:
 	pop %cx
 	loop SectorLoop
 
+	// Nodify BIOS to enter 32bit mode
+	mov $0xEC00, %ax
+	mov $1, %bl
+	int $0x15
+
 	// Video mode: 320x200 @16 cols
 	xor %ah, %ah
 	mov $0x13, %al
@@ -132,6 +137,7 @@ SectorSameSegment:
 	int $0x10
 
 	// Enable PE flag
+	cli
 	mov %cr0, %eax
 	or $0x1, %eax
 	mov %eax, %cr0

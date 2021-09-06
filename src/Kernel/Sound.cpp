@@ -2,7 +2,6 @@
 
 namespace
 {
-	uint wait;
 	bool playing, mute;
 }
 

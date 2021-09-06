@@ -55,7 +55,7 @@ constexpr double durations[noteCount] = {
 	Tps * .22, Tps * .25, Tps * .5, Tps * .88, // And hurt you
 };
 
-constexpr char* words[noteCount] = {
+constexpr const char* words[noteCount] = {
 	"Never", "Never", "Gonna", "Gonna",
 	"Give", "You", "Up",
 
@@ -84,8 +84,8 @@ void Play()
 	if (step >= noteCount)
 	{
 		Screen::Clear();
-		constexpr char msg[] = "Thanks for 50 subs <3";
-		Font::DrawStr(msg, Screen::Width / 2 - (sizeof(msg) - 1) * 4, Screen::Height / 2 - 6);
+		constexpr const char msg[] = "Thanks for 50 subs <3";
+		Font::DrawStr(msg, Screen::Width / 2 - (sizeof(msg) - 1) * 4, Screen::Height / 2 - 6, 0x28);
 		Screen::SwapBuffers();
 		return;
 	}
